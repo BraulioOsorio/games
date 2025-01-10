@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Palabra Aleatoria Gamer</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"> <!-- Fuente gamer -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="controller">
@@ -24,9 +24,12 @@
     </div>
     <div class="container">
         <h1>Palabra Aleatoria Gamer</h1>
+        <div id="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
+        <p id="words-remaining">Palabras restantes: <span id="remaining-count"></span></p>
         <div id="word-container">
             <span id="random-word"></span>
-            <img id="word-image" src="" alt="Imagen del juego" style="display:none;">
         </div>
         <button onclick="showRandomWord()">Generar Palabra</button>
     </div>
