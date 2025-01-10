@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palabra Aleatoria Gamer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"> <!-- Fuente gamer -->
+</head>
+<body>
+    <div id="controller">
+        <div id="left-dpad">
+            <div class="up"></div>
+            <div class="down"></div>
+            <div class="left"></div>
+            <div class="right"></div>
+        </div>
+        <div id="right-buttons">
+            <div class="a"></div>
+            <div class="b"></div>
+            <div class="x"></div>
+            <div class="y"></div>
+        </div>
+    </div>
+    <div class="container">
+        <h1>Palabra Aleatoria Gamer</h1>
+        <div id="word-container">
+            <span id="random-word"></span>
+            <img id="word-image" src="" alt="Imagen del juego" style="display:none;">
+        </div>
+        <button onclick="showRandomWord()">Generar Palabra</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(45deg, #0d0d0d, #1a1a1a);
+    font-family: 'Press Start 2P', cursive; /* Fuente de estilo retro gamer */
+    margin: 0;
+    color: #b3b3b3; /* gris claro */
+    overflow: hidden; /* Ocultar desbordamiento para evitar scroll */
+}
+
+.container {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Sombra oscura */
+    width: 80%; /* Ancho del contenedor principal */
+    max-width: 700px; /* Ancho máximo del contenedor principal */
+    border: 2px solid #4b0082; /* Borde morado oscuro */
+    position: relative;
+    z-index: 1;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #9370db; /* morado pálido */
+    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082; /* Efecto de sombra suave */
+}
+
+#word-container {
+    margin: 20px auto; /* Margen automático para centrar vertical y horizontalmente */
+    padding: 30px;
+    background: #1a1a1a; /* Fondo negro */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Sombra oscura */
+    border: 2px solid #4b0082; /* Borde morado oscuro */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#random-word {
+    font-size: 3rem; /* Tamaño de la palabra aumentado */
+    font-weight: bold;
+    color: #9370db; /* morado pálido */
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082; /* Efecto de sombra suave */
+}
+
+#game-image {
+    margin-top: 20px;
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra oscura */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+button {
+    padding: 15px 30px;
+    background: #1a1a1a; /* Fondo negro */
+    border: 2px solid #4b0082; /* Borde morado oscuro */
+    border-radius: 10px;
+    color: #b3b3b3; /* gris claro */
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082; /* Efecto de sombra suave */
+}
+
+button:hover {
+    background: #4b0082; /* Fondo morado oscuro */
+    color: #1a1a1a; /* Texto negro */
+    transform: scale(1.1); /* Agranda el botón al pasar el mouse */
+}
+
+#controller {
+    position: relative;
+    width: 400px;
+    height: 200px;
+    background: rgba(0, 0, 0, 0.8); /* Fondo negro */
+    border-radius: 30px;
+    box-shadow: inset 0 0 10px #000;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 20px; /* Espacio entre el control y el contenedor */
+    border: 2px solid #4b0082; /* Borde morado oscuro */
+}
+
+#controller::before,
+#controller::after {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: #1a1a1a; /* Fondo negro */
+    border-radius: 50%;
+    box-shadow: inset 0 0 10px #000;
+    border: 2px solid #4b0082; /* Borde morado oscuro */
+}
+
+#controller::before {
+    top: -40px;
+    left: 20%;
+}
+
+#controller::after {
+    top: -40px;
+    right: 20%;
+}
+
+#left-dpad,
+#right-buttons {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background: #1a1a1a; /* Fondo negro */
+    border-radius: 50%;
+    box-shadow: 0 0 10px #000;
+    border: 2px solid #4b0082; /* Borde morado oscuro */
+}
+
+#left-dpad div,
+#right-buttons div {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #666;
+    border-radius: 50%;
+    box-shadow: inset 0 0 5px #000;
+}
+
+#left-dpad .up {
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#left-dpad .down {
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#left-dpad .left {
+    top: 50%;
+    left: -10px;
+    transform: translateY(-50%);
+}
+
+#left-dpad .right {
+    top: 50%;
+    right: -10px;
+    transform: translateY(-50%);
+}
+
+#right-buttons .a {
+    top: 50%;
+    right: -10px;
+    transform: translateY(-50%);
+    background: #0f0;
+}
+
+#right-buttons .b {
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f00;
+}
+
+#right-buttons .x {
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00f;
+}
+
+#right-buttons .y {
+    top: 50%;
+    left: -10px;
+    transform: translateY(-50%);
+    background: #ff0;
+}
+
+.neon-purple {
+    background: #9370db !important; /* morado neón */
+    box-shadow: 0 0 10px #9370db, 0 0 20px #9370db, 0 0 30px #9370db; /* Efecto de neón */
+}
