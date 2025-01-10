@@ -5,10 +5,10 @@ body {
     align-items: center;
     height: 100vh;
     background: linear-gradient(45deg, #0d0d0d, #1a1a1a);
-    font-family: 'Press Start 2P', cursive; /* Fuente de estilo retro gamer */
+    font-family: 'Press Start 2P', cursive;
     margin: 0;
-    color: #b3b3b3; /* gris claro */
-    overflow: hidden; /* Ocultar desbordamiento para evitar scroll */
+    color: #b3b3b3;
+    overflow: hidden;
 }
 
 .container {
@@ -16,121 +16,112 @@ body {
     background: rgba(0, 0, 0, 0.8);
     padding: 40px;
     border-radius: 15px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Sombra oscura */
-    width: 80%; /* Ancho del contenedor principal */
-    max-width: 700px; /* Ancho máximo del contenedor principal */
-    border: 2px solid #4b0082; /* Borde morado oscuro */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    width: 80%;
+    max-width: 700px;
+    border: 2px solid #4b0082;
     position: relative;
     z-index: 1;
 }
 
 h1 {
     margin-bottom: 20px;
-    color: #9370db; /* morado pálido */
-    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082; /* Efecto de sombra suave */
+    color: #9370db;
+    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082;
 }
 
+
+
 #word-container {
-    margin: 20px auto; /* Margen automático para centrar vertical y horizontalmente */
+    margin: 20px auto;
     padding: 30px;
-    background: #1a1a1a; /* Fondo negro */
+    background: #1a1a1a;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Sombra oscura */
-    border: 2px solid #4b0082; /* Borde morado oscuro */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border: 2px solid #4b0082;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    height: 200px; /* Altura fija */
+    overflow-y: auto; /* Habilita desplazamiento vertical */
+    text-align: center;
+    max-width: 100%; /* Evita que el contenido desborde horizontalmente */
 }
 
 #random-word {
-    font-size: 3rem; /* Tamaño de la palabra aumentado */
+    font-size: 2rem;
     font-weight: bold;
-    color: #9370db; /* morado pálido */
+    color: #9370db;
     opacity: 0;
     animation: fadeIn 1s forwards;
-    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082; /* Efecto de sombra suave */
+    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082;
+    white-space: normal; /* Permite que el texto se divida en líneas */
+    overflow: hidden; /* Oculta desbordamiento horizontal si es necesario */
+    text-overflow: ellipsis; /* Opcional: muestra "..." si es muy largo */
+    word-break: break-word; /* Divide palabras largas si es necesario */
 }
 
-#game-image {
-    margin-top: 20px;
-    max-width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra oscura */
+#progress-bar-container {
+    width: 100%;
+    height: 10px;
+    background: rgba(75, 0, 130, 0.3);
+    border-radius: 5px;
+    margin: 20px 0;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.5);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+#progress-bar {
+    width: 0;
+    height: 100%;
+    background: #4b0082;
+    transition: width 0.3s ease-in-out;
 }
 
 button {
     padding: 15px 30px;
-    background: #1a1a1a; /* Fondo negro */
-    border: 2px solid #4b0082; /* Borde morado oscuro */
+    background: #1a1a1a;
+    border: 2px solid #4b0082;
     border-radius: 10px;
-    color: #b3b3b3; /* gris claro */
+    color: #b3b3b3;
     cursor: pointer;
     transition: background 0.3s, transform 0.3s;
-    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082; /* Efecto de sombra suave */
+    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082;
 }
 
 button:hover {
-    background: #4b0082; /* Fondo morado oscuro */
-    color: #1a1a1a; /* Texto negro */
-    transform: scale(1.1); /* Agranda el botón al pasar el mouse */
+    background: #4b0082;
+    color: #1a1a1a;
+    transform: scale(1.1);
 }
 
 #controller {
     position: relative;
     width: 400px;
     height: 200px;
-    background: rgba(0, 0, 0, 0.8); /* Fondo negro */
+    background: rgba(0, 0, 0, 0.8);
     border-radius: 30px;
-    box-shadow: inset 0 0 10px #000;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    margin-bottom: 20px; /* Espacio entre el control y el contenedor */
-    border: 2px solid #4b0082; /* Borde morado oscuro */
-}
-
-#controller::before,
-#controller::after {
-    content: '';
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    background: #1a1a1a; /* Fondo negro */
-    border-radius: 50%;
-    box-shadow: inset 0 0 10px #000;
-    border: 2px solid #4b0082; /* Borde morado oscuro */
-}
-
-#controller::before {
-    top: -40px;
-    left: 20%;
-}
-
-#controller::after {
-    top: -40px;
-    right: 20%;
+    margin-bottom: 20px;
+    border: 2px solid #4b0082;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
 }
 
 #left-dpad,
 #right-buttons {
     position: relative;
-    width: 60px;
-    height: 60px;
-    background: #1a1a1a; /* Fondo negro */
+    width: 80px;
+    height: 80px;
+    background: #1a1a1a;
     border-radius: 50%;
-    box-shadow: 0 0 10px #000;
-    border: 2px solid #4b0082; /* Borde morado oscuro */
+    border: 2px solid #4b0082;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #left-dpad div,
@@ -143,59 +134,17 @@ button:hover {
     box-shadow: inset 0 0 5px #000;
 }
 
-#left-dpad .up {
-    top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-}
+#left-dpad .up { top: -10px; }
+#left-dpad .down { bottom: -10px; }
+#left-dpad .left { left: -10px; }
+#left-dpad .right { right: -10px; }
 
-#left-dpad .down {
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-}
+#right-buttons .a { background: #0f0; right: -10px; }
+#right-buttons .b { background: #f00; bottom: -10px; }
+#right-buttons .x { background: #00f; top: -10px; }
+#right-buttons .y { background: #ff0; left: -10px; }
 
-#left-dpad .left {
-    top: 50%;
-    left: -10px;
-    transform: translateY(-50%);
-}
-
-#left-dpad .right {
-    top: 50%;
-    right: -10px;
-    transform: translateY(-50%);
-}
-
-#right-buttons .a {
-    top: 50%;
-    right: -10px;
-    transform: translateY(-50%);
-    background: #0f0;
-}
-
-#right-buttons .b {
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #f00;
-}
-
-#right-buttons .x {
-    top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #00f;
-}
-
-#right-buttons .y {
-    top: 50%;
-    left: -10px;
-    transform: translateY(-50%);
-    background: #ff0;
-}
-
-.neon-purple {
-    background: #9370db !important; /* morado neón */
-    box-shadow: 0 0 10px #9370db, 0 0 20px #9370db, 0 0 30px #9370db; /* Efecto de neón */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
 }
