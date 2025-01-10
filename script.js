@@ -14,53 +14,61 @@ const words = [
     "FAR CRY NEW DAWN DELUXE EDITION","PACIFIC DRIVE","UNKNOWN 9 AWAKENING","WARHAMMER 40000 SPACE MARINE 2","QUANTUM BREAK STEAM EDITION","CALL OF DUTY WWII","METAL GEAR SOLID V THE PHANTOM PAIN",
     "TERMINATOR RESISTANCE","SCARS ABOVE","OBSERVER SYSTEM REDUX","CRASH BANDICOOT 4 IT'S ABOUT TIME","CRYSIS 2 REMASTERED","GHOST OF TSUSHIMA DIRECTOR'S CUT","GEARS 5 ULTIMATE EDITION","THE EVIL WITHIN 2","HOMEFRONT THE REVOLUTION",
     "ORI AND THE WILL OF THE WISPS","MECHWARRIOR 5: CLANS - TRIALS OF WAR","INDIANA JONES AND THE GREAT CIRCLE","SYNDICATE 2012","UNRAVEL TWO","BATTLEFIELD 4","CALL OF DUTY BLACK OPS","ASSASSINS CREED MIRAGE MASTER ASSASSIN EDITION",
-    "CHERNOBYLITE COMPLETE EDITION",
+    "CHERNOBYLITE COMPLETE EDITION"
 
 ];
 
-function shuffleArray(array) {
-    let count = 0;
-    for (let i = array.length - 1; i > 0; i--) {
-        count++;
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    console.log(count);
-    
-    return array;
-}
 
 //HOGWARTS LEGACY
 
-function getRandomColor() {
-    const colors = ['#0f0', '#f00', '#00f', '#ff0']; // Colores disponibles para los botones
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
+let usedWords = []; // Lista para palabras usadas
+let remainingWords = [...words]; // Copia del array original
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
+function updateProgressBar() {
+    const progressBar = document.getElementById('progress-bar');
+    const progressPercentage = (usedWords.length / words.length) * 100;
+    progressBar.style.width = `${progressPercentage}%`;
+}
+
+function updateWordCount() {
+    const remainingCount = document.getElementById('remaining-count');
+    remainingCount.textContent = remainingWords.length;
+}
+
+function getRandomColor() {
+    const colors = ['#0f0', '#f00', '#00f', '#ff0'];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
 
 function showRandomWord() {
-    shuffleArray(words);
-    const randomIndex = Math.floor(Math.random() * words.length);
-    const randomWord = words[randomIndex];
+    if (remainingWords.length === 0) {
+        alert('Todas las palabras han sido mostradas. Reiniciando...');
+        remainingWords = [...words];
+        usedWords = [];
+    }
+    shuffleArray(remainingWords);
+    const randomWord = remainingWords.pop();
+    usedWords.push(randomWord);
+
     const wordElement = document.getElementById('random-word');
+    wordElement.textContent = randomWord;
+
     const leftButtons = document.querySelectorAll('#left-dpad div');
     const rightButtons = document.querySelectorAll('#right-buttons div');
+    leftButtons.forEach(button => (button.style.background = getRandomColor()));
+    rightButtons.forEach(button => (button.style.background = getRandomColor()));
 
-    wordElement.textContent = randomWord;
-    wordElement.style.opacity = 0; // Reinicia la opacidad
-    wordElement.style.animation = 'none'; // Reinicia la animación
-    void wordElement.offsetWidth; // Forza el reflow para reiniciar la animación
-    wordElement.style.animation = 'fadeIn 1s forwards'; // Aplica la animación
-
-    leftButtons.forEach(button => {
-        const randomColor = getRandomColor();
-        button.style.background = randomColor;
-    });
-
-    rightButtons.forEach(button => {
-        const randomColor = getRandomColor();
-        button.style.background = randomColor;
-    });
+    updateWordCount();
+    updateProgressBar();
 }
+
+document.addEventListener('DOMContentLoaded', () => updateWordCount());
 //www.compucalitv.com
