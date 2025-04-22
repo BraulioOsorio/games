@@ -33,13 +33,13 @@ def descargar_video_o_audio(url, salida, opcion):
         print(f"Ha ocurrido un error: {e}")
 
 # URL del video de YouTube
-url_video = 'https://www.youtube.com/watch?v=YltqogcGeaU'  # Reemplaza 'ejemploID' con el ID del video real
+url_video = 'https://youtu.be/hcFSFjJ2b6o'  # Reemplaza 'ejemploID' con el ID del video real
 
 # Carpeta de salida (usando cadena sin procesar)
 carpeta_salida = r'C:\Users\usuario\Documents\Youtube'
 
 # Opción para descargar ('video' o 'audio')
-opcion_descarga = 'audio'  # Cambia a 'video' si deseas descargar el video completo
+opcion_descarga = 'video'  # Cambia a 'video' si deseas descargar el video completo
 
 # Descargar el video o audio según la opción seleccionada
 descargar_video_o_audio(url_video, carpeta_salida, opcion_descarga)
