@@ -1,38 +1,34 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palabra Aleatoria Gamer</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Palabra Aleatoria Gamer</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="controller">
-        <div id="left-dpad">
-            <div class="up"></div>
-            <div class="down"></div>
-            <div class="left"></div>
-            <div class="right"></div>
-        </div>
-        <div id="right-buttons">
-            <div class="a"></div>
-            <div class="b"></div>
-            <div class="x"></div>
-            <div class="y"></div>
-        </div>
+  <!-- CONTROLADOR: solo el contenedor para la imagen -->
+  <div id="controller">
+    <div id="game-image-container">
+      <img id="game-img" alt="Imagen del juego" />
     </div>
-    <div class="container">
-        <h1>Palabra Aleatoria Gamer</h1>
-        <div id="progress-bar-container">
-            <div id="progress-bar"></div>
-        </div>
-        <p id="words-remaining">Palabras restantes: <span id="remaining-count"></span></p>
-        <div id="word-container">
-            <span id="random-word"></span>
-        </div>
-        <button onclick="showRandomWord()">Generar Palabra</button>
+  </div>
+
+  <div class="container">
+    <h1>Palabra Aleatoria Gamer</h1>
+    <div id="progress-bar-container">
+      <div id="progress-bar"></div>
     </div>
-    <script src="script.js"></script>
+    <p>Palabras restantes: <span id="remaining-count"></span></p>
+    <p>Palabra actual: <span id="current-word-number">0</span></p>
+    <div id="word-container">
+      <span id="random-word"></span>
+    </div>
+    <button onclick="showRandomWord()">Generar Palabra</button>
+    <button onclick="resetWords()">Reiniciar Lista</button>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
