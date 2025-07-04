@@ -11,6 +11,8 @@ body {
     background: linear-gradient(45deg, #0d0d0d, #1a1a1a);
     background-size: 200% 200%;
     animation: bgPulse 10s infinite alternate;
+    overflow-y: auto;
+    padding: 20px 0;
   }
   
   /* ------ CONTROLADOR (solo marco) ------ */
@@ -59,6 +61,7 @@ body {
     max-width: 700px;
     border: 2px solid #4b0082;
     box-shadow: 0 0 20px rgb(102, 0, 255);
+    margin-bottom: 20px;
   }
   
   h1 {
@@ -131,6 +134,76 @@ body {
   button:active {
     transform: scale(0.95);
     background: #2d0a55;
+  }
+
+  /* ------ CONTENEDOR PALABRAS YA USADAS ------ */
+  .used-words-container {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #4b0082;
+    border-radius: 15px;
+    padding: 20px;
+    width: 80%;
+    max-width: 700px;
+    box-shadow: 0 0 20px rgb(102, 0, 255);
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .used-words-container h2 {
+    color: #9370db;
+    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082;
+    margin-bottom: 15px;
+    font-size: 1rem;
+  }
+
+  #used-words-table {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    background: #1a1a1a;
+    border-radius: 10px;
+    border: 2px solid #4b0082;
+    padding: 15px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: left;
+  }
+
+  .used-word-item {
+    background: rgba(147, 112, 219, 0.1);
+    border: 1px solid #4b0082;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 0.7rem;
+    color: #b3b3b3;
+    transition: all 0.3s ease;
+    border-left: 4px solid #4b0082;
+  }
+
+  .used-word-item:hover {
+    background: rgba(147, 112, 219, 0.2);
+    border-left: 4px solid #9370db;
+    transform: translateX(5px);
+  }
+
+  /* Scroll personalizado para las palabras usadas */
+  #used-words-table::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  #used-words-table::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 10px;
+  }
+
+  #used-words-table::-webkit-scrollbar-thumb {
+    background: #4b0082;
+    border-radius: 10px;
+  }
+
+  #used-words-table::-webkit-scrollbar-thumb:hover {
+    background: #9370db;
   }
   
   /* ------ KEYFRAMES ------ */
