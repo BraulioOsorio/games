@@ -15,17 +15,39 @@ const words = [
     "TERMINATOR RESISTANCE","SCARS ABOVE","OBSERVER SYSTEM REDUX","CRASH BANDICOOT 4 IT'S ABOUT TIME","GHOST OF TSUSHIMA DIRECTOR'S CUT","GEARS 5 ULTIMATE EDITION","THE EVIL WITHIN 2","HOMEFRONT THE REVOLUTION",
     "INDIANA JONES AND THE GREAT CIRCLE","SYNDICATE 2012","UNRAVEL TWO","CALL OF DUTY BLACK OPS","ASSASSINS CREED MIRAGE MASTER ASSASSIN EDITION","TRANSFORMERS FALL OF CYBERTRON","ROADCRAFT","THE CHORUS","GUARDIANS OF THE GALAXY",
     "CHERNOBYLITE COMPLETE EDITION","STAR WARS BATTLEFRONT II ULTIMATE EDITION","RECORE DEFINITIVE EDITION","RESIDENT EVIL 2 REMAKE DELUXE EDITION","CRYSIS 3 REMASTERED","BATTLEFIRLD HARDLINE","CALL OF DUTY: ADVANCED WARFARE"
-
 ];
 
+// NUEVO: Array para la lista de descargas dinámicas
+let downloadList = ["BATTLEFIELD 4"];
 
-//
-
-let usedWords      = [];
+// Arrays existentes
+let usedWords = [];
 let remainingWords = [...words];
-const apiKey       = 'c6beb639913a47a8b4148f99ab751619';
+let currentWord = ""; // Para guardar la palabra actual mostrada
 
-let imageTimeout;  // temporizador para la petición de la imagen
+const apiKey = 'c6beb639913a47a8b4148f99ab751619';
+let imageTimeout;
+
+// Configuración personalizada de SweetAlert2 con tema gaming
+const gamingAlert = {
+  customClass: {
+    popup: 'gaming-popup',
+    title: 'gaming-title',
+    content: 'gaming-content',
+    confirmButton: 'gaming-confirm-btn',
+    cancelButton: 'gaming-cancel-btn'
+  },
+  background: 'rgba(0, 0, 0, 0.95)',
+  color: '#b3b3b3',
+  confirmButtonColor: '#4b0082',
+  cancelButtonColor: '#dc143c',
+  showClass: {
+    popup: 'animate__animated animate__fadeInDown'
+  },
+  hideClass: {
+    popup: 'animate__animated animate__fadeOutUp'
+  }
+};
 
 // Mezcla un array aleatoriamente
 function shuffleArray(array) {
@@ -47,12 +69,11 @@ function updateWordCount() {
   document.getElementById('remaining-count').textContent = remainingWords.length;
 }
 
-
 // Busca la imagen en RAWG
 async function fetchGameImage(gameName) {
   const url = `https://api.rawg.io/api/games?key=${apiKey}&search=${encodeURIComponent(gameName)}`;
   try {
-    const res  = await fetch(url);
+    const res = await fetch(url);
     const data = await res.json();
     return data.results?.[0]?.background_image || null;
   } catch (e) {
@@ -61,12 +82,12 @@ async function fetchGameImage(gameName) {
   }
 }
 
-// Esta función sólo hace la petición de la imagen tras 10s de inactividad en clicks
+// Esta función sólo hace la petición de la imagen tras 1.5s de inactividad en clicks
 function scheduleImageLoad(word) {
   clearTimeout(imageTimeout);
   imageTimeout = setTimeout(async () => {
     const imgEl = document.getElementById('game-img');
-    const url   = await fetchGameImage(word);
+    const url = await fetchGameImage(word);
 
     if (url) {
       imgEl.src = url;
@@ -84,17 +105,27 @@ function showRandomWord() {
   if (remainingWords.length === 0) {
     remainingWords = [...words];
     usedWords = [];
-    alert('Todas las palabras mostradas. Reiniciando lista.');
+    Swal.fire({
+      ...gamingAlert,
+      title: '🎮 ¡Lista Reiniciada!',
+      text: 'Todas las palabras mostradas. Reiniciando lista.',
+      icon: 'info',
+      confirmButtonText: 'Continuar'
+    });
   }
 
   shuffleArray(remainingWords);
   const word = remainingWords.pop();
   usedWords.push(word);
+  currentWord = word; // Guardar la palabra actual
 
   // Mostrar texto al instante
   const txtEl = document.getElementById('random-word');
   txtEl.textContent = word;
   txtEl.classList.add('visible');
+
+  // Habilitar el botón de agregar a descargas
+  document.getElementById('add-word-btn').disabled = false;
 
   // Limpiar y ocultar la imagen antigua
   const imgEl = document.getElementById('game-img');
@@ -102,7 +133,7 @@ function showRandomWord() {
   imgEl.src = '';
   imgEl.alt = '';
 
-  // Programar la petición de imagen tras 10s sin más clicks
+  // Programar la petición de imagen tras 1.5s sin más clicks
   scheduleImageLoad(word);
 
   // Actualizar UI
@@ -111,23 +142,334 @@ function showRandomWord() {
   document.getElementById('current-word-number').textContent = usedWords.length;
 }
 
-// Reinicia manualmente la lista
-function resetWords() {
-  usedWords = [];
-  remainingWords = [...words];
+// NUEVA FUNCIÓN: Agregar la palabra actual a la lista de descargas
+function addCurrentWordToDownloadList() {
+  if (!currentWord || downloadList.includes(currentWord)) {
+    if (downloadList.includes(currentWord)) {
+      Swal.fire({
+        ...gamingAlert,
+        title: '⚠️ Juego Duplicado',
+        text: 'Este juego ya está en la lista de descargas.',
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
+      });
+    }
+    return;
+  }
+
+  // Agregar a la lista de descargas
+  downloadList.push(currentWord);
+  
+  // Eliminar de los arrays de palabras disponibles
+  const wordIndex = words.indexOf(currentWord);
+  if (wordIndex > -1) {
+    words.splice(wordIndex, 1);
+  }
+  
+  // Eliminar de remainingWords si está ahí
+  const remainingIndex = remainingWords.indexOf(currentWord);
+  if (remainingIndex > -1) {
+    remainingWords.splice(remainingIndex, 1);
+  }
+
+  // Actualizar UI
   updateWordCount();
   updateProgressBar();
-  document.getElementById('random-word').textContent = '';
-  document.getElementById('current-word-number').textContent = '0';
-  clearTimeout(imageTimeout);
-  const imgEl = document.getElementById('game-img');
-  imgEl.src = '';
-  imgEl.alt = '';
+  document.getElementById('add-word-btn').disabled = true;
+  
+  // Mostrar notificación
+  Swal.fire({
+    ...gamingAlert,
+    title: '✅ ¡Agregado Exitosamente!',
+    html: `<strong>"${currentWord}"</strong><br><br>Agregado a la lista de descargas y eliminado del diccionario.`,
+    icon: 'success',
+    confirmButtonText: 'Genial',
+    timer: 3000,
+    timerProgressBar: true
+  });
+  
+  // Limpiar palabra actual
+  currentWord = "";
+  document.getElementById('random-word').textContent = "";
 }
 
+// NUEVA FUNCIÓN: Mostrar el modal de descargas
+function showDownloadModal() {
+  updateDownloadTable();
+  document.getElementById('downloadModal').style.display = 'flex';
+}
+
+// NUEVA FUNCIÓN: Cerrar el modal de descargas
+function closeDownloadModal() {
+  document.getElementById('downloadModal').style.display = 'none';
+}
+
+// NUEVA FUNCIÓN: Actualizar la tabla de descargas en el modal
+function updateDownloadTable() {
+  const noMessage = document.getElementById('no-downloads-message');
+  const tableContainer = document.getElementById('download-table-container');
+  const tbody = document.getElementById('download-table-body');
+  
+  if (downloadList.length === 0) {
+    noMessage.style.display = 'block';
+    tableContainer.style.display = 'none';
+    return;
+  }
+  
+  noMessage.style.display = 'none';
+  tableContainer.style.display = 'block';
+  
+  tbody.innerHTML = '';
+  downloadList.forEach((game, index) => {
+    const row = document.createElement('div');
+    row.className = 'table-row';
+    row.innerHTML = `
+      <div class="table-cell">${index + 1}</div>
+      <div class="table-cell">${game}</div>
+      <div class="table-cell">
+        <button class="danger-btn small-btn" onclick="removeFromDownloadList(${index})">
+          🗑️ Eliminar
+        </button>
+      </div>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// NUEVA FUNCIÓN: Eliminar juego de la lista de descargas
+function removeFromDownloadList(index) {
+  const removedGame = downloadList[index];
+  
+  Swal.fire({
+    ...gamingAlert,
+    title: '🎮 ¿Qué hacer con este juego?',
+    html: `<strong>"${removedGame}"</strong><br><br>¿Qué quieres hacer con este juego?`,
+    icon: 'question',
+    showCancelButton: true,
+    showDenyButton: true,
+    confirmButtonText: '↩️ Restaurar al Diccionario',
+    denyButtonText: '🗑️ Eliminar Completamente',
+    cancelButtonText: '❌ Cancelar',
+    customClass: {
+      ...gamingAlert.customClass,
+      denyButton: 'gaming-deny-btn'
+    },
+    reverseButtons: false
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Opción 1: Restaurar al diccionario
+      downloadList.splice(index, 1);
+      words.push(removedGame);
+      remainingWords.push(removedGame);
+      
+      updateWordCount();
+      updateProgressBar();
+      updateDownloadTable();
+      
+      Swal.fire({
+        ...gamingAlert,
+        title: '↩️ ¡Juego Restaurado!',
+        html: `<strong>"${removedGame}"</strong><br><br>Ha sido devuelto al diccionario y estará disponible nuevamente.`,
+        icon: 'success',
+        confirmButtonText: 'Perfecto',
+        timer: 3000,
+        timerProgressBar: true
+      });
+      
+    } else if (result.isDenied) {
+      // Opción 2: Eliminar completamente
+      Swal.fire({
+        ...gamingAlert,
+        title: '⚠️ ¿Eliminar Permanentemente?',
+        html: `<strong>"${removedGame}"</strong><br><br>¿Estás seguro? Esta acción no se puede deshacer. El juego será eliminado completamente de todo el sistema.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '🗑️ Sí, Eliminar',
+        cancelButtonText: '❌ Cancelar',
+        confirmButtonColor: '#dc143c',
+        reverseButtons: true
+      }).then((confirmResult) => {
+        if (confirmResult.isConfirmed) {
+          // Eliminar completamente
+          downloadList.splice(index, 1);
+          
+          updateDownloadTable();
+          
+          Swal.fire({
+            ...gamingAlert,
+            title: '🗑️ ¡Juego Eliminado!',
+            html: `<strong>"${removedGame}"</strong><br><br>Ha sido eliminado permanentemente del sistema.`,
+            icon: 'success',
+            confirmButtonText: 'Entendido',
+            timer: 3000,
+            timerProgressBar: true
+          });
+        }
+      });
+    }
+    // Si cancela (result.dismiss), no hacer nada
+  });
+}
+
+// NUEVA FUNCIÓN: Limpiar toda la lista de descargas
+function clearDownloadList() {
+  if (downloadList.length === 0) {
+    Swal.fire({
+      ...gamingAlert,
+      title: '📋 Lista Vacía',
+      text: 'La lista de descargas ya está vacía.',
+      icon: 'info',
+      confirmButtonText: 'Entendido'
+    });
+    return;
+  }
+  
+  Swal.fire({
+    ...gamingAlert,
+    title: '🗑️ ¿Limpiar Lista Completa?',
+    text: '¿Estás seguro de que quieres limpiar toda la lista de descargas? Todos los juegos serán devueltos al diccionario.',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, limpiar',
+    cancelButtonText: 'Cancelar',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Devolver todos los juegos al diccionario principal
+      downloadList.forEach(game => {
+        words.push(game);
+        remainingWords.push(game);
+      });
+      
+      // Limpiar la lista
+      downloadList = [];
+      
+      // Actualizar UI
+      updateWordCount();
+      updateProgressBar();
+      updateDownloadTable();
+      
+      Swal.fire({
+        ...gamingAlert,
+        title: '✅ ¡Lista Limpiada!',
+        text: 'Todos los juegos han sido devueltos al diccionario.',
+        icon: 'success',
+        confirmButtonText: 'Excelente',
+        timer: 3000,
+        timerProgressBar: true
+      });
+    }
+  });
+}
+
+// NUEVA FUNCIÓN: Agregar nueva palabra al diccionario
+function addNewWordToDictionary(newWord) {
+  const trimmedWord = newWord.trim().toUpperCase();
+  
+  if (!trimmedWord) {
+    Swal.fire({
+      ...gamingAlert,
+      title: '❌ Palabra Inválida',
+      text: 'Por favor ingresa un nombre válido para el juego.',
+      icon: 'error',
+      confirmButtonText: 'Entendido'
+    });
+    return false;
+  }
+  
+  if (words.includes(trimmedWord) || downloadList.includes(trimmedWord)) {
+    Swal.fire({
+      ...gamingAlert,
+      title: '⚠️ Juego Duplicado',
+      text: 'Este juego ya existe en el diccionario o en la lista de descargas.',
+      icon: 'warning',
+      confirmButtonText: 'Entendido'
+    });
+    return false;
+  }
+  
+  // Agregar al diccionario principal
+  words.push(trimmedWord);
+  remainingWords.push(trimmedWord);
+  
+  // Actualizar UI
+  updateWordCount();
+  updateProgressBar();
+  
+  Swal.fire({
+    ...gamingAlert,
+    title: '🎮 ¡Juego Agregado!',
+    html: `<strong>"${trimmedWord}"</strong><br><br>Agregado exitosamente al diccionario.`,
+    icon: 'success',
+    confirmButtonText: 'Genial',
+    timer: 3000,
+    timerProgressBar: true
+  });
+  return true;
+}
+
+// Reinicia manualmente la lista
+function resetWords() {
+  Swal.fire({
+    ...gamingAlert,
+    title: '🔄 ¿Reiniciar Lista?',
+    text: '¿Estás seguro de que quieres reiniciar? Esto NO afectará tu lista de descargas.',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, reiniciar',
+    cancelButtonText: 'Cancelar',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      usedWords = [];
+      remainingWords = [...words];
+      currentWord = "";
+      
+      updateWordCount();
+      updateProgressBar();
+      document.getElementById('random-word').textContent = '';
+      document.getElementById('current-word-number').textContent = '0';
+      document.getElementById('add-word-btn').disabled = true;
+      
+      clearTimeout(imageTimeout);
+      const imgEl = document.getElementById('game-img');
+      imgEl.src = '';
+      imgEl.alt = '';
+      imgEl.classList.remove('loaded');
+
+      Swal.fire({
+        ...gamingAlert,
+        title: '✅ ¡Lista Reiniciada!',
+        text: 'La lista ha sido reiniciada exitosamente.',
+        icon: 'success',
+        confirmButtonText: 'Perfecto',
+        timer: 2000,
+        timerProgressBar: true
+      });
+    }
+  });
+}
+
+// Event listeners
 document.addEventListener('DOMContentLoaded', () => {
   updateWordCount();
   updateProgressBar();
+  
+  // Agregar listener para el formulario de nueva palabra
+  document.getElementById('add-word-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = document.getElementById('new-word-input');
+    if (addNewWordToDictionary(input.value)) {
+      input.value = '';
+    }
+  });
+
+  // Cerrar modal al hacer click fuera de él
+  document.getElementById('downloadModal').addEventListener('click', (e) => {
+    if (e.target.id === 'downloadModal') {
+      closeDownloadModal();
+    }
+  });
 });
 
 //www.compucalitv.com

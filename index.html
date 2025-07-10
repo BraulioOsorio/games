@@ -6,6 +6,8 @@
   <title>Palabra Aleatoria Gamer</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
   <!-- CONTROLADOR: solo el contenedor para la imagen -->
@@ -25,19 +27,62 @@
     <div id="word-container">
       <span id="random-word"></span>
     </div>
-    <button onclick="showRandomWord()">Generar Palabra</button>
-    <button onclick="resetWords()">Reiniciar Lista</button>
+    
+    <!-- Botones principales -->
+    <div class="button-row">
+      <button onclick="showRandomWord()">Generar Palabra</button>
+      <button onclick="resetWords()">Reiniciar Lista</button>
+    </div>
+    
+    <!-- Botones nuevas funcionalidades -->
+    <div class="button-row">
+      <button id="add-word-btn" onclick="addCurrentWordToDownloadList()" disabled>
+        ➕ Agregar a Descargas
+      </button>
+      <button onclick="showDownloadModal()">
+        📋 Ver Lista de Descargas
+      </button>
+    </div>
   </div>
 
-  <!-- NUEVO CONTENEDOR PARA PALABRAS YA USADAS -->
-  <div class="used-words-container">
-    <h2>Juegos Por Descargar</h2>
-    <div id="used-words-table">
-      <!-- Aquí puedes agregar manualmente las palabras que ya han tocado -->
-      <div class="used-word-item">BATTLEFIELD 4</div>
-      <div class="used-word-item">SHADOW WARRIOR 3</div>
-      <div class="used-word-item">JUST CAUSE 3</div>
-      <!-- Agrega más palabras como estas cuando vayan saliendo -->
+  <!-- Formulario para agregar nuevas palabras -->
+  <div class="form-container">
+    <h2>Agregar Nueva Palabra al Diccionario</h2>
+    <form id="add-word-form">
+      <div class="input-group">
+        <input type="text" id="new-word-input" placeholder="Escribe el nombre del juego..." required>
+        <button type="submit">Agregar Palabra</button>
+      </div>
+    </form>
+  </div>
+  <!-- Modal para mostrar la lista de descargas -->
+  <div id="downloadModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>🎮 Lista de Juegos Para Descargar</h3>
+        <button class="close-btn" onclick="closeDownloadModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="download-list-container">
+          <div id="no-downloads-message" class="no-downloads">
+            No hay juegos agregados a la lista de descargas aún.
+          </div>
+          <div id="download-table-container" class="download-table" style="display: none;">
+            <div class="table-header">
+              <div class="table-cell">#</div>
+              <div class="table-cell">Juego</div>
+              <div class="table-cell">Acciones</div>
+            </div>
+            <div id="download-table-body">
+              <!-- Aquí se agregarán las filas dinámicamente -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button onclick="clearDownloadList()" class="danger-btn">Limpiar Lista</button>
+        <button onclick="closeDownloadModal()">Cerrar</button>
+      </div>
     </div>
   </div>
 

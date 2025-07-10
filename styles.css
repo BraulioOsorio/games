@@ -123,6 +123,8 @@ body {
     margin: 0 10px;
     text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082;
     transition: background 0.3s, transform 0.3s;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
   }
   
   button:hover {
@@ -134,6 +136,432 @@ body {
   button:active {
     transform: scale(0.95);
     background: #2d0a55;
+  }
+
+  button:disabled {
+    background: #2a2a2a;
+    color: #666;
+    cursor: not-allowed;
+    border-color: #666;
+    text-shadow: none;
+  }
+
+  button:disabled:hover {
+    transform: none;
+    background: #2a2a2a;
+    color: #666;
+  }
+
+  /* ------ SWEETALERT2 ESTILOS GAMING ------ */
+  .gaming-popup {
+    background: rgba(0, 0, 0, 0.95) !important;
+    border: 2px solid #4b0082 !important;
+    border-radius: 15px !important;
+    box-shadow: 0 0 30px rgb(102, 0, 255) !important;
+    font-family: 'Press Start 2P', cursive !important;
+  }
+
+  .gaming-title {
+    color: #9370db !important;
+    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082 !important;
+    font-family: 'Press Start 2P', cursive !important;
+    font-size: 1rem !important;
+    margin-bottom: 15px !important;
+  }
+
+  .gaming-content {
+    color: #b3b3b3 !important;
+    font-family: 'Press Start 2P', cursive !important;
+    font-size: 0.7rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .gaming-confirm-btn {
+    background: #4b0082 !important;
+    border: 2px solid #4b0082 !important;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+    font-family: 'Press Start 2P', cursive !important;
+    font-size: 0.7rem !important;
+    padding: 10px 20px !important;
+    text-shadow: 0 0 5px #4b0082 !important;
+    transition: all 0.3s ease !important;
+    margin: 5px 8px !important;
+    min-width: 180px !important;
+  }
+
+  .gaming-confirm-btn:hover {
+    background: #9370db !important;
+    border-color: #9370db !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 0 15px rgb(102, 0, 255) !important;
+  }
+
+  .gaming-cancel-btn {
+    background: #4a1a1a !important;
+    border: 2px solid #dc143c !important;
+    border-radius: 10px !important;
+    color: #ffb6c1 !important;
+    font-family: 'Press Start 2P', cursive !important;
+    font-size: 0.7rem !important;
+    padding: 10px 20px !important;
+    text-shadow: 0 0 5px #dc143c !important;
+    transition: all 0.3s ease !important;
+    margin: 5px 8px !important;
+    min-width: 120px !important;
+  }
+
+  .gaming-cancel-btn:hover {
+    background: #dc143c !important;
+    border-color: #dc143c !important;
+    color: #1a1a1a !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 0 15px rgb(220, 20, 60) !important;
+  }
+
+  .gaming-deny-btn {
+    background: #2d2d2d !important;
+    border: 2px solid #ffa500 !important;
+    border-radius: 10px !important;
+    color: #ffd700 !important;
+    font-family: 'Press Start 2P', cursive !important;
+    font-size: 0.7rem !important;
+    padding: 10px 20px !important;
+    text-shadow: 0 0 5px #ffa500 !important;
+    transition: all 0.3s ease !important;
+    margin: 5px 8px !important;
+    min-width: 180px !important;
+  }
+
+  .gaming-deny-btn:hover {
+    background: #ffa500 !important;
+    border-color: #ffa500 !important;
+    color: #1a1a1a !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 0 15px rgb(255, 165, 0) !important;
+  }
+
+  /* Ajustar el contenedor de botones de SweetAlert2 */
+  .swal2-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    margin: 20px 0 !important;
+    padding: 0 10px !important;
+  }
+
+  /* Personalizar el ícono de SweetAlert2 */
+  .swal2-icon {
+    border: 2px solid #4b0082 !important;
+    border-radius: 10px !important;
+    background: rgba(75, 0, 130, 0.2) !important;
+  }
+
+  .swal2-icon.swal2-success {
+    border-color: #228b22 !important;
+    background: rgba(34, 139, 34, 0.2) !important;
+  }
+
+  .swal2-icon.swal2-error {
+    border-color: #dc143c !important;
+    background: rgba(220, 20, 60, 0.2) !important;
+  }
+
+  .swal2-icon.swal2-warning {
+    border-color: #ffa500 !important;
+    background: rgba(255, 165, 0, 0.2) !important;
+  }
+
+  .swal2-icon.swal2-info {
+    border-color: #4169e1 !important;
+    background: rgba(65, 105, 225, 0.2) !important;
+  }
+
+  .swal2-icon.swal2-question {
+    border-color: #9370db !important;
+    background: rgba(147, 112, 219, 0.2) !important;
+  }
+
+  /* Personalizar la barra de progreso del timer */
+  .swal2-timer-progress-bar {
+    background: #4b0082 !important;
+    height: 4px !important;
+  }
+
+  /* Personalizar el backdrop */
+  .swal2-backdrop-show {
+    background: rgba(0, 0, 0, 0.8) !important;
+  }
+
+  /* Personalizar el HTML content */
+  .swal2-html-container strong {
+    color: #9370db !important;
+    text-shadow: 0 0 5px #4b0082 !important;
+  }
+
+  /* ------ FILAS DE BOTONES ------ */
+  .button-row {
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .button-row button {
+    margin: 5px;
+    font-size: 0.7rem;
+    padding: 12px 20px;
+  }
+
+  /* ------ BOTONES ESPECIALES ------ */
+  .danger-btn {
+    background: #4a1a1a !important;
+    border-color: #dc143c !important;
+    color: #ffb6c1 !important;
+    text-shadow: 0 0 5px #dc143c !important;
+  }
+
+  .danger-btn:hover {
+    background: #dc143c !important;
+    color: #1a1a1a !important;
+  }
+
+  .small-btn {
+    padding: 8px 12px !important;
+    font-size: 0.6rem !important;
+    margin: 2px !important;
+  }
+
+  /* ------ FORMULARIO ------ */
+  .form-container {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 30px;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 700px;
+    border: 2px solid #4b0082;
+    box-shadow: 0 0 20px rgb(102, 0, 255);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .form-container h2 {
+    color: #9370db;
+    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082;
+    margin-bottom: 20px;
+    font-size: 1rem;
+  }
+
+  .input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .input-group input {
+    background: #1a1a1a;
+    border: 2px solid #4b0082;
+    border-radius: 10px;
+    color: #b3b3b3;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    padding: 12px 15px;
+    width: 300px;
+    max-width: 100%;
+  }
+
+  .input-group input:focus {
+    outline: none;
+    border-color: #9370db;
+    box-shadow: 0 0 15px rgb(102, 0, 255);
+  }
+
+  .input-group input::placeholder {
+    color: #666;
+    font-size: 0.6rem;
+  }
+
+  .input-group button {
+    font-size: 0.7rem;
+    padding: 12px 20px;
+    margin: 0;
+  }
+
+  /* ------ MODAL ------ */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid #4b0082;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgb(102, 0, 255);
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .modal-header {
+    background: rgba(75, 0, 130, 0.2);
+    border-bottom: 2px solid #4b0082;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 13px 13px 0 0;
+  }
+
+  .modal-header h3 {
+    color: #9370db;
+    text-shadow: 0 0 5px #4b0082, 0 0 10px #4b0082;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .close-btn {
+    background: #4a1a1a !important;
+    border: 2px solid #dc143c !important;
+    color: #ffb6c1 !important;
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 5px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 0.8rem !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .close-btn:hover {
+    background: #dc143c !important;
+    color: #1a1a1a !important;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .modal-footer {
+    background: rgba(75, 0, 130, 0.1);
+    border-top: 2px solid #4b0082;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-radius: 0 0 13px 13px;
+  }
+
+  .modal-footer button {
+    font-size: 0.7rem;
+    padding: 10px 15px;
+    margin: 0;
+  }
+
+  /* ------ TABLA PERSONALIZADA ------ */
+  .no-downloads {
+    background: rgba(75, 0, 130, 0.2);
+    border: 2px solid #4b0082;
+    color: #9370db;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.8rem;
+  }
+
+  .download-table {
+    background: #1a1a1a;
+    border: 2px solid #4b0082;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .table-header {
+    background: rgba(75, 0, 130, 0.3);
+    display: flex;
+    border-bottom: 2px solid #4b0082;
+  }
+
+  .table-header .table-cell {
+    color: #9370db;
+    text-shadow: 0 0 5px #4b0082;
+    font-weight: bold;
+    padding: 15px;
+    text-align: center;
+    border-right: 2px solid #4b0082;
+  }
+
+  .table-header .table-cell:last-child {
+    border-right: none;
+  }
+
+  .table-header .table-cell:nth-child(1) { width: 10%; }
+  .table-header .table-cell:nth-child(2) { width: 60%; }
+  .table-header .table-cell:nth-child(3) { width: 30%; }
+
+  .table-row {
+    display: flex;
+    border-bottom: 1px solid #4b0082;
+  }
+
+  .table-row:nth-child(even) {
+    background: rgba(75, 0, 130, 0.1);
+  }
+
+  .table-row:hover {
+    background: rgba(75, 0, 130, 0.2);
+  }
+
+  .table-row .table-cell {
+    padding: 12px 15px;
+    text-align: center;
+    border-right: 1px solid #4b0082;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+  }
+
+  .table-row .table-cell:last-child {
+    border-right: none;
+  }
+
+  .table-row .table-cell:nth-child(1) { width: 10%; }
+  .table-row .table-cell:nth-child(2) { width: 60%; text-align: left; }
+  .table-row .table-cell:nth-child(3) { width: 30%; }
+
+  /* Scroll personalizado para el modal */
+  .modal-content::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .modal-content::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+
+  .modal-content::-webkit-scrollbar-thumb {
+    background: #4b0082;
+    border-radius: 4px;
+  }
+
+  .modal-content::-webkit-scrollbar-thumb:hover {
+    background: #9370db;
   }
 
   /* ------ CONTENEDOR PALABRAS YA USADAS ------ */
@@ -204,6 +632,79 @@ body {
 
   #used-words-table::-webkit-scrollbar-thumb:hover {
     background: #9370db;
+  }
+  
+  /* ------ RESPONSIVE ------ */
+  @media (max-width: 768px) {
+    .container, .form-container {
+      width: 95%;
+      padding: 20px;
+    }
+    
+    .button-row {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .button-row button {
+      width: 200px;
+      margin: 5px 0;
+    }
+    
+    .input-group {
+      flex-direction: column;
+    }
+    
+    .input-group input {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    
+    .modal-content {
+      width: 95%;
+      margin: 10px;
+    }
+    
+    .table-row .table-cell {
+      font-size: 0.6rem;
+      padding: 8px;
+    }
+
+    /* SweetAlert2 responsive */
+    .gaming-popup {
+      margin: 10px !important;
+      max-width: 95% !important;
+    }
+    
+    .gaming-title {
+      font-size: 0.8rem !important;
+    }
+    
+    .gaming-content {
+      font-size: 0.6rem !important;
+    }
+    
+    .gaming-confirm-btn, .gaming-cancel-btn {
+      font-size: 0.6rem !important;
+      padding: 8px 15px !important;
+      margin: 8px 5px !important;
+      min-width: 140px !important;
+    }
+
+    .gaming-deny-btn {
+      font-size: 0.6rem !important;
+      padding: 8px 15px !important;
+      margin: 8px 5px !important;
+      min-width: 140px !important;
+    }
+
+    /* Ajustar el contenedor de botones en móviles */
+    .swal2-actions {
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 8px !important;
+      margin: 15px 0 !important;
+    }
   }
   
   /* ------ KEYFRAMES ------ */
