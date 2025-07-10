@@ -28,6 +28,127 @@ let currentWord = ""; // Para guardar la palabra actual mostrada
 const apiKey = 'c6beb639913a47a8b4148f99ab751619';
 let imageTimeout;
 
+// NUEVAS FUNCIONES: Sistema de persistencia con localStorage
+function saveToLocalStorage() {
+  try {
+    const gameData = {
+      downloadList: downloadList,
+      customWords: words.filter(word => !originalWords.includes(word)), // Solo palabras agregadas por el usuario
+      usedWords: usedWords,
+      remainingWords: remainingWords,
+      lastUpdated: new Date().toISOString()
+    };
+    localStorage.setItem('gamerWordApp', JSON.stringify(gameData));
+  } catch (error) {
+    console.error('Error guardando datos:', error);
+  }
+}
+
+function loadFromLocalStorage() {
+  try {
+    const savedData = localStorage.getItem('gamerWordApp');
+    if (savedData) {
+      const gameData = JSON.parse(savedData);
+      
+      // Restaurar lista de descargas
+      if (gameData.downloadList) {
+        downloadList = gameData.downloadList;
+      }
+      
+      // Restaurar palabras personalizadas (agregar las que no estén en el diccionario original)
+      if (gameData.customWords && Array.isArray(gameData.customWords)) {
+        gameData.customWords.forEach(word => {
+          if (!words.includes(word)) {
+            words.push(word);
+          }
+        });
+      }
+      
+      // Eliminar de words las palabras que están en downloadList
+      downloadList.forEach(downloadedGame => {
+        const index = words.indexOf(downloadedGame);
+        if (index > -1) {
+          words.splice(index, 1);
+        }
+      });
+      
+      // Restaurar palabras usadas (opcional)
+      if (gameData.usedWords) {
+        usedWords = gameData.usedWords;
+      }
+      
+      // Recalcular remainingWords
+      remainingWords = words.filter(word => !usedWords.includes(word));
+      
+      Swal.fire({
+        ...gamingAlert,
+        title: '💾 ¡Datos Cargados!',
+        text: 'Tus datos guardados han sido restaurados exitosamente.',
+        icon: 'success',
+        confirmButtonText: 'Perfecto',
+        timer: 2000,
+        timerProgressBar: true
+      });
+    }
+  } catch (error) {
+    console.error('Error cargando datos:', error);
+    Swal.fire({
+      ...gamingAlert,
+      title: '⚠️ Error de Carga',
+      text: 'Hubo un problema al cargar los datos guardados. Se usarán los datos por defecto.',
+      icon: 'warning',
+      confirmButtonText: 'Entendido'
+    });
+  }
+}
+
+function clearLocalStorage() {
+  Swal.fire({
+    ...gamingAlert,
+    title: '🗑️ ¿Borrar Todos los Datos?',
+    text: '¿Estás seguro? Esto eliminará:\n- Lista de descargas\n- Palabras personalizadas\n- Progreso guardado\n\nEsta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: '🗑️ Sí, Borrar Todo',
+    cancelButtonText: '❌ Cancelar',
+    confirmButtonColor: '#a64444',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      localStorage.removeItem('gamerWordApp');
+      
+      // Resetear a valores originales
+      downloadList = [];
+      usedWords = [];
+      words.length = 0;
+      words.push(...originalWords);
+      remainingWords = [...words];
+      currentWord = "";
+      
+      // Actualizar UI
+      updateWordCount();
+      updateProgressBar();
+      updateDownloadTable();
+      document.getElementById('random-word').textContent = '';
+      document.getElementById('current-word-number').textContent = '0';
+      document.getElementById('add-word-btn').disabled = true;
+      
+      Swal.fire({
+        ...gamingAlert,
+        title: '✅ ¡Datos Borrados!',
+        text: 'Todos los datos han sido eliminados. La aplicación se ha reiniciado.',
+        icon: 'success',
+        confirmButtonText: 'Perfecto',
+        timer: 3000,
+        timerProgressBar: true
+      });
+    }
+  });
+}
+
+// Guardar copia del diccionario original para poder resetear
+const originalWords = [...words];
+
 // Configuración personalizada de SweetAlert2 con tema gaming
 const gamingAlert = {
   customClass: {
@@ -119,6 +240,9 @@ function showRandomWord() {
   usedWords.push(word);
   currentWord = word; // Guardar la palabra actual
 
+  // Guardar progreso en localStorage
+  saveToLocalStorage();
+
   // Mostrar texto al instante
   const txtEl = document.getElementById('random-word');
   txtEl.textContent = word;
@@ -171,6 +295,9 @@ function addCurrentWordToDownloadList() {
   if (remainingIndex > -1) {
     remainingWords.splice(remainingIndex, 1);
   }
+
+  // Guardar cambios en localStorage
+  saveToLocalStorage();
 
   // Actualizar UI
   updateWordCount();
@@ -262,6 +389,9 @@ function removeFromDownloadList(index) {
       words.push(removedGame);
       remainingWords.push(removedGame);
       
+      // Guardar cambios en localStorage
+      saveToLocalStorage();
+      
       updateWordCount();
       updateProgressBar();
       updateDownloadTable();
@@ -292,6 +422,9 @@ function removeFromDownloadList(index) {
         if (confirmResult.isConfirmed) {
           // Eliminar completamente
           downloadList.splice(index, 1);
+          
+          // Guardar cambios en localStorage
+          saveToLocalStorage();
           
           updateDownloadTable();
           
@@ -344,6 +477,9 @@ function clearDownloadList() {
       // Limpiar la lista
       downloadList = [];
       
+      // Guardar cambios en localStorage
+      saveToLocalStorage();
+      
       // Actualizar UI
       updateWordCount();
       updateProgressBar();
@@ -392,6 +528,9 @@ function addNewWordToDictionary(newWord) {
   words.push(trimmedWord);
   remainingWords.push(trimmedWord);
   
+  // Guardar cambios en localStorage
+  saveToLocalStorage();
+  
   // Actualizar UI
   updateWordCount();
   updateProgressBar();
@@ -425,6 +564,9 @@ function resetWords() {
       remainingWords = [...words];
       currentWord = "";
       
+      // Guardar cambios en localStorage
+      saveToLocalStorage();
+      
       updateWordCount();
       updateProgressBar();
       document.getElementById('random-word').textContent = '';
@@ -452,6 +594,7 @@ function resetWords() {
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
+  loadFromLocalStorage(); // Cargar datos al inicio
   updateWordCount();
   updateProgressBar();
   
