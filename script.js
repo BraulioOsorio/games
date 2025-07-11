@@ -18,7 +18,7 @@ const words = [
 ];
 
 // NUEVO: Array para la lista de descargas dinámicas
-let downloadList = ["BATTLEFIELD 4"];
+let downloadList = ["BATTLEFIELD 4 "];
 
 // Arrays existentes
 let usedWords = [];
