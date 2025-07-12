@@ -345,11 +345,9 @@ function updateDownloadTable() {
   downloadList.forEach((download, index) => {
     const row = document.createElement('div');
     row.className = 'table-row';
-    const date = new Date(download.download_date).toLocaleDateString();
     row.innerHTML = `
       <div class="table-cell">${index + 1}</div>
       <div class="table-cell">${download.game_name}</div>
-      <div class="table-cell">${date}</div>
       <div class="table-cell">
         <button class="danger-btn small-btn" onclick="removeFromDownloadList('${download.game_name}')">
           ↩️ Restaurar
@@ -357,6 +355,51 @@ function updateDownloadTable() {
       </div>
     `;
     tbody.appendChild(row);
+  });
+}
+
+// Reiniciar la lista de palabras usadas
+function resetWords() {
+  Swal.fire({
+    ...gamingAlert,
+    title: '🔄 ¿Reiniciar Lista?',
+    text: 'Esto reiniciará el contador de palabras mostradas. Los juegos descargados permanecerán en tu lista.',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: '✅ Sí, Reiniciar',
+    cancelButtonText: '❌ Cancelar',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Reiniciar contadores locales
+      usedWords = [];
+      
+      // Limpiar interfaz
+      currentWord = "";
+      document.getElementById('random-word').textContent = '';
+      document.getElementById('current-word-number').textContent = '0';
+      document.getElementById('add-word-btn').disabled = true;
+      
+      // Limpiar imagen
+      clearTimeout(imageTimeout);
+      const imgEl = document.getElementById('game-img');
+      imgEl.src = '';
+      imgEl.alt = '';
+      imgEl.classList.remove('loaded');
+
+      // Actualizar UI
+      updateProgressBar();
+      
+      Swal.fire({
+        ...gamingAlert,
+        title: '✅ ¡Lista Reiniciada!',
+        text: 'El contador se ha reiniciado. Puedes volver a generar palabras.',
+        icon: 'success',
+        confirmButtonText: 'Perfecto',
+        timer: 2000,
+        timerProgressBar: true
+      });
+    }
   });
 }
 
@@ -521,7 +564,23 @@ async function initializeApp() {
 }
 
 // Inicializar cuando se carga la página
-document.addEventListener('DOMContentLoaded', initializeApp);
+document.addEventListener('DOMContentLoaded', () => {
+  initializeApp();
+  
+  // Event listener para el formulario de agregar nuevas palabras
+  document.getElementById('add-word-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = document.getElementById('new-word-input');
+    const value = input.value.trim().toUpperCase();
+    
+    if (value && value.length >= 3) {
+      addNewWordToDictionary(value);
+      input.value = ''; // Limpiar el input después de agregar
+    } else {
+      showError('Por favor ingresa un nombre válido de al menos 3 caracteres');
+    }
+  });
+});
 
 // Cerrar modal cuando se hace clic fuera de él
 document.addEventListener('click', (e) => {

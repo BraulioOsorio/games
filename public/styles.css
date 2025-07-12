@@ -554,8 +554,8 @@ button:disabled:hover {
   border-right: none;
 }
 
-.table-header .table-cell:nth-child(1) { width: 10%; }
-.table-header .table-cell:nth-child(2) { width: 60%; }
+.table-header .table-cell:nth-child(1) { width: 15%; }
+.table-header .table-cell:nth-child(2) { width: 55%; }
 .table-header .table-cell:nth-child(3) { width: 30%; }
 
 .table-row {
@@ -585,8 +585,8 @@ button:disabled:hover {
   border-right: none;
 }
 
-.table-row .table-cell:nth-child(1) { width: 10%; }
-.table-row .table-cell:nth-child(2) { width: 60%; text-align: left; }
+.table-row .table-cell:nth-child(1) { width: 15%; }
+.table-row .table-cell:nth-child(2) { width: 55%; text-align: left; }
 .table-row .table-cell:nth-child(3) { width: 30%; }
 
 /* Scroll personalizado para el modal */
