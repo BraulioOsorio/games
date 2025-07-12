@@ -11,6 +11,19 @@ let remainingWords = [];
 const apiKey = 'c6beb639913a47a8b4148f99ab751619';
 let imageTimeout;
 
+// Funciones de loading
+function showLoading(message = 'Cargando...') {
+  const loadingEl = document.getElementById('loading');
+  const loadingText = loadingEl.querySelector('p');
+  loadingText.textContent = message;
+  loadingEl.classList.remove('loading-hidden');
+}
+
+function hideLoading() {
+  const loadingEl = document.getElementById('loading');
+  loadingEl.classList.add('loading-hidden');
+}
+
 // Configuración personalizada de SweetAlert2 con tema gaming
 const gamingAlert = {
   customClass: {
@@ -35,6 +48,7 @@ const gamingAlert = {
 // Funciones de API
 async function fetchGames() {
   try {
+    showLoading('Cargando juegos desde la base de datos...');
     const response = await fetch(`${API_BASE_URL}/api/games`);
     if (!response.ok) throw new Error('Error obteniendo juegos');
     const games = await response.json();
@@ -67,6 +81,7 @@ async function fetchDownloads() {
 
 async function addGameToDatabase(gameName) {
   try {
+    showLoading('Agregando juego a la base de datos...');
     const response = await fetch(`${API_BASE_URL}/api/games`, {
       method: 'POST',
       headers: {
@@ -80,8 +95,11 @@ async function addGameToDatabase(gameName) {
       throw new Error(error.error || 'Error agregando juego');
     }
     
-    return await response.json();
+    const result = await response.json();
+    hideLoading();
+    return result;
   } catch (error) {
+    hideLoading();
     console.error('Error:', error);
     throw error;
   }
@@ -89,6 +107,7 @@ async function addGameToDatabase(gameName) {
 
 async function markAsDownloaded(gameName) {
   try {
+    showLoading('Marcando juego como descargado...');
     const response = await fetch(`${API_BASE_URL}/api/downloads`, {
       method: 'POST',
       headers: {
@@ -102,8 +121,11 @@ async function markAsDownloaded(gameName) {
       throw new Error(error.error || 'Error marcando descarga');
     }
     
-    return await response.json();
+    const result = await response.json();
+    hideLoading();
+    return result;
   } catch (error) {
+    hideLoading();
     console.error('Error:', error);
     throw error;
   }
@@ -127,6 +149,7 @@ async function getRandomGame() {
 
 async function restoreGame(gameName) {
   try {
+    showLoading('Restaurando juego...');
     const response = await fetch(`${API_BASE_URL}/api/downloads/${encodeURIComponent(gameName)}`, {
       method: 'DELETE'
     });
@@ -136,8 +159,11 @@ async function restoreGame(gameName) {
       throw new Error(error.error || 'Error restaurando juego');
     }
     
-    return await response.json();
+    const result = await response.json();
+    hideLoading();
+    return result;
   } catch (error) {
+    hideLoading();
     console.error('Error:', error);
     throw error;
   }
@@ -145,6 +171,7 @@ async function restoreGame(gameName) {
 
 async function populateDatabase() {
   try {
+    showLoading('Poblando base de datos con juegos...');
     const response = await fetch(`${API_BASE_URL}/api/populate`, {
       method: 'POST'
     });
@@ -154,8 +181,11 @@ async function populateDatabase() {
       throw new Error(error.error || 'Error poblando base de datos');
     }
     
-    return await response.json();
+    const result = await response.json();
+    hideLoading();
+    return result;
   } catch (error) {
+    hideLoading();
     console.error('Error:', error);
     throw error;
   }
@@ -163,6 +193,7 @@ async function populateDatabase() {
 
 // Funciones de utilidad
 function showError(message) {
+  hideLoading();
   Swal.fire({
     ...gamingAlert,
     title: '❌ Error',
@@ -358,24 +389,31 @@ function updateDownloadTable() {
   });
 }
 
-// Reiniciar la lista de palabras usadas
-function resetWords() {
-  Swal.fire({
+// Reiniciar la lista de palabras usadas COMPLETAMENTE (desde 0)
+async function resetWords() {
+  const result = await Swal.fire({
     ...gamingAlert,
-    title: '🔄 ¿Reiniciar Lista?',
-    text: 'Esto reiniciará el contador de palabras mostradas. Los juegos descargados permanecerán en tu lista.',
+    title: '🔄 ¿Reiniciar Completamente?',
+    text: 'Esto reiniciará todo desde 0: contador de palabras, interfaz y recargará los juegos desde la base de datos. Los juegos descargados permanecerán en tu lista.',
     icon: 'question',
     showCancelButton: true,
-    confirmButtonText: '✅ Sí, Reiniciar',
+    confirmButtonText: '✅ Sí, Reiniciar Todo',
     cancelButtonText: '❌ Cancelar',
     reverseButtons: true
-  }).then((result) => {
-    if (result.isConfirmed) {
-      // Reiniciar contadores locales
-      usedWords = [];
+  });
+
+  if (result.isConfirmed) {
+    try {
+      showLoading('Reiniciando aplicación...');
       
-      // Limpiar interfaz
+      // Reiniciar COMPLETAMENTE todas las variables
+      usedWords = [];
       currentWord = "";
+      
+      // Recargar juegos desde la base de datos
+      await fetchGames();
+      
+      // Limpiar interfaz completamente
       document.getElementById('random-word').textContent = '';
       document.getElementById('current-word-number').textContent = '0';
       document.getElementById('add-word-btn').disabled = true;
@@ -388,19 +426,25 @@ function resetWords() {
       imgEl.classList.remove('loaded');
 
       // Actualizar UI
+      updateWordCount();
       updateProgressBar();
+      
+      hideLoading();
       
       Swal.fire({
         ...gamingAlert,
-        title: '✅ ¡Lista Reiniciada!',
-        text: 'El contador se ha reiniciado. Puedes volver a generar palabras.',
+        title: '✅ ¡Aplicación Reiniciada!',
+        text: 'Todo se ha reiniciado desde 0. Los datos están actualizados desde la base de datos.',
         icon: 'success',
         confirmButtonText: 'Perfecto',
-        timer: 2000,
+        timer: 3000,
         timerProgressBar: true
       });
+    } catch (error) {
+      hideLoading();
+      showError('Error reiniciando la aplicación: ' + error.message);
     }
-  });
+  }
 }
 
 // Eliminar juego de la lista de descargas
@@ -521,11 +565,14 @@ function addNewWord() {
 // Inicializar la aplicación
 async function initializeApp() {
   try {
+    showLoading('Inicializando aplicación...');
+    
     // Cargar juegos desde la base de datos
     await fetchGames();
     
     // Si no hay juegos, preguntar si quiere poblar la base de datos
     if (allGames.length === 0) {
+      hideLoading();
       const result = await Swal.fire({
         ...gamingAlert,
         title: '🎮 Base de Datos Vacía',
@@ -553,11 +600,16 @@ async function initializeApp() {
     }
     
     // Cargar descargas
+    showLoading('Cargando historial de descargas...');
     await fetchDownloads();
+    
+    // Ocultar loading
+    hideLoading();
     
     console.log('✅ Aplicación inicializada correctamente');
     
   } catch (error) {
+    hideLoading();
     console.error('Error inicializando aplicación:', error);
     showError('Error inicializando la aplicación');
   }

@@ -11,6 +11,14 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
+  <!-- Loading indicator -->
+  <div id="loading" class="loading-overlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Cargando juegos...</p>
+    </div>
+  </div>
+
   <!-- CONTROLADOR: solo el contenedor para la imagen -->
   <div id="controller">
     <div id="game-image-container">
@@ -23,7 +31,7 @@
     <div id="progress-bar-container">
       <div id="progress-bar"></div>
     </div>
-    <p>Palabras restantes: <span id="remaining-count"></span></p>
+    <p>Palabras restantes: <span id="remaining-count">0</span></p>
     <p>Palabra actual: <span id="current-word-number">0</span></p>
     <div id="word-container">
       <span id="random-word"></span>

@@ -1,3 +1,54 @@
+/* ------ LOADING ------ */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.loading-spinner {
+  text-align: center;
+  background: rgba(58, 0, 102, 0.2);
+  padding: 30px;
+  border-radius: 15px;
+  border: 2px solid #3a0066;
+  box-shadow: 0 0 20px rgba(80, 0, 160, 0.4);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(58, 0, 102, 0.3);
+  border-top: 4px solid #7055a3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+  color: #7055a3;
+  text-shadow: 0 0 3px #3a0066, 0 0 6px #3a0066;
+  font-size: 0.8rem;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.loading-hidden {
+  display: none !important;
+}
+
 /* ------ GLOBAL ------ */
 body {
   display: flex;
