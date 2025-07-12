@@ -62,20 +62,16 @@ const allGames = [
 // Inicializar base de datos
 async function initDatabase() {
   try {
+    // Eliminar tabla downloads si existe
+    await pool.query('DROP TABLE IF EXISTS downloads');
+    
+    // Crear solo tabla games
     await pool.query(`
       CREATE TABLE IF NOT EXISTS games (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL UNIQUE,
         status INTEGER DEFAULT 1,
         added_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS downloads (
-        id SERIAL PRIMARY KEY,
-        game_name VARCHAR(255) NOT NULL,
-        download_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
@@ -132,13 +128,7 @@ app.post('/api/downloads', async (req, res) => {
   }
 
   try {
-    // Agregar a la tabla de descargas
-    await pool.query(
-      'INSERT INTO downloads (game_name) VALUES ($1)',
-      [gameName]
-    );
-
-    // Cambiar status a 2 (descargado)
+    // Solo cambiar status a 2 (descargado)
     await pool.query(
       'UPDATE games SET status = $1 WHERE name = $2',
       [2, gameName]
@@ -151,11 +141,12 @@ app.post('/api/downloads', async (req, res) => {
   }
 });
 
-// Obtener historial de descargas (juegos con estado 2)
+// Obtener juegos descargados (estado 2)
 app.get('/api/downloads', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT d.*, g.status FROM downloads d LEFT JOIN games g ON d.game_name = g.name ORDER BY d.download_date DESC'
+      'SELECT * FROM games WHERE status = $1 ORDER BY added_date DESC',
+      [2]
     );
     res.json(result.rows);
   } catch (err) {
