@@ -53,7 +53,13 @@ async function fetchGames() {
     if (!response.ok) throw new Error('Error obteniendo juegos');
     const games = await response.json();
     allGames = games;
-    remainingWords = games.map(game => game.name);
+    
+    // Solo incluir en remainingWords los juegos disponibles (status = 1)
+    // y que no estén ya en usedWords
+    remainingWords = games
+      .filter(game => game.status === 1 && !usedWords.includes(game.name))
+      .map(game => game.name);
+    
     updateWordCount();
     updateProgressBar();
     return games;
@@ -256,16 +262,30 @@ function scheduleImageLoad(word) {
 // Función principal para mostrar palabra aleatoria
 async function showRandomWord() {
   try {
-    const game = await getRandomGame();
-    currentWord = game.name;
-    usedWords.push(game.name);
+    // Verificar si hay juegos disponibles
+    if (remainingWords.length === 0) {
+      Swal.fire({
+        ...gamingAlert,
+        title: '🎮 ¡No hay juegos disponibles!',
+        text: 'Todos los juegos han sido mostrados. Usa "Reiniciar Lista" para empezar de nuevo.',
+        icon: 'info',
+        confirmButtonText: 'Entendido'
+      });
+      return;
+    }
+
+    // Elegir un juego aleatorio de remainingWords
+    const randomIndex = Math.floor(Math.random() * remainingWords.length);
+    const gameName = remainingWords[randomIndex];
     
-    // Remover de remainingWords
-    remainingWords = remainingWords.filter(word => word !== game.name);
+    // Actualizar variables
+    currentWord = gameName;
+    usedWords.push(gameName);
+    remainingWords.splice(randomIndex, 1);
 
     // Mostrar texto al instante
     const txtEl = document.getElementById('random-word');
-    txtEl.textContent = game.name;
+    txtEl.textContent = gameName;
     txtEl.classList.add('visible');
 
     // Habilitar el botón de agregar a descargas
@@ -278,7 +298,7 @@ async function showRandomWord() {
     imgEl.alt = '';
 
     // Programar la petición de imagen tras 1.5s sin más clicks
-    scheduleImageLoad(game.name);
+    scheduleImageLoad(gameName);
 
     // Actualizar UI
     updateWordCount();
@@ -286,17 +306,7 @@ async function showRandomWord() {
     document.getElementById('current-word-number').textContent = usedWords.length;
 
   } catch (error) {
-    if (error.message === 'No hay juegos disponibles') {
-      Swal.fire({
-        ...gamingAlert,
-        title: '🎮 ¡No hay juegos disponibles!',
-        text: 'Todos los juegos han sido descargados o no hay juegos en la base de datos.',
-        icon: 'info',
-        confirmButtonText: 'Entendido'
-      });
-    } else {
-      showError('Error obteniendo juego aleatorio: ' + error.message);
-    }
+    showError('Error mostrando juego aleatorio: ' + error.message);
   }
 }
 
@@ -316,7 +326,7 @@ async function addCurrentWordToDownloadList() {
       download_date: new Date().toISOString()
     });
     
-    // Remover de remainingWords
+    // Remover de remainingWords (ya se hizo en showRandomWord, pero por seguridad)
     remainingWords = remainingWords.filter(word => word !== currentWord);
     
     // Actualizar UI
@@ -471,7 +481,11 @@ async function removeFromDownloadList(gameName) {
       
       // Actualizar listas locales
       downloadList = downloadList.filter(d => d.name !== gameName);
-      remainingWords.push(gameName);
+      
+      // Solo agregar a remainingWords si no está ya en usedWords (para evitar duplicados)
+      if (!usedWords.includes(gameName)) {
+        remainingWords.push(gameName);
+      }
       
       // Actualizar UI
       updateWordCount();
@@ -552,7 +566,11 @@ async function addNewWordToDictionary(newWord) {
     
     // Actualizar listas locales
     allGames.push({ name: newWord, status: 'available' });
-    remainingWords.push(newWord);
+    
+    // Solo agregar a remainingWords si no está ya en usedWords (para evitar duplicados)
+    if (!usedWords.includes(newWord)) {
+      remainingWords.push(newWord);
+    }
     
     // Actualizar UI
     updateWordCount();
