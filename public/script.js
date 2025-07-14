@@ -312,7 +312,7 @@ async function addCurrentWordToDownloadList() {
     
     // Actualizar listas locales
     downloadList.push({
-      game_name: currentWord,
+      name: currentWord,
       download_date: new Date().toISOString()
     });
     
@@ -378,10 +378,10 @@ function updateDownloadTable() {
     row.className = 'table-row';
     row.innerHTML = `
       <div class="table-cell">${index + 1}</div>
-      <div class="table-cell">${download.game_name}</div>
+      <div class="table-cell">${download.name}</div>
       <div class="table-cell">
-        <button class="danger-btn small-btn" onclick="removeFromDownloadList('${download.game_name}')">
-          ↩️ Restaurar
+        <button class="danger-btn small-btn" onclick="removeFromDownloadList('${download.name}')">
+          Restaurar
         </button>
       </div>
     `;
@@ -465,7 +465,7 @@ async function removeFromDownloadList(gameName) {
       await restoreGame(gameName);
       
       // Actualizar listas locales
-      downloadList = downloadList.filter(d => d.game_name !== gameName);
+      downloadList = downloadList.filter(d => d.name !== gameName);
       remainingWords.push(gameName);
       
       // Actualizar UI
