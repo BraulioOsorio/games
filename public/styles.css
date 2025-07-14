@@ -654,6 +654,19 @@ button:disabled:hover {
 .table-row .table-cell:nth-child(2) { width: 55%; text-align: left; }
 .table-row .table-cell:nth-child(3) { width: 30%; }
 
+.actions-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.actions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
 /* Scroll personalizado para el modal */
 .modal-content::-webkit-scrollbar {
   width: 8px;

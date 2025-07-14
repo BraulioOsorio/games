@@ -379,13 +379,15 @@ function updateDownloadTable() {
     row.innerHTML = `
       <div class="table-cell">${index + 1}</div>
       <div class="table-cell">${download.name}</div>
-      <div class="table-cell">
-        <button class="danger-btn small-btn" onclick="removeFromDownloadList('${download.name}')">
-          Restaurar
-        </button>
-        <button class="delete-btn small-btn" onclick="hideGamePermanently('${download.name}')">
-          Eliminar
-        </button>
+      <div class="table-cell actions-cell">
+        <div class="actions-stack">
+          <button class="danger-btn small-btn" onclick="removeFromDownloadList('${download.name}')">
+            Restaurar
+          </button>
+          <button class="delete-btn small-btn" onclick="hideGamePermanently('${download.name}')">
+            Eliminar
+          </button>
+        </div>
       </div>
     `;
     tbody.appendChild(row);
