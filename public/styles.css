@@ -398,6 +398,8 @@ button:disabled:hover {
 .button-row {
   margin: 15px 0;
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: center;
   gap: 15px;
   flex-wrap: wrap;
