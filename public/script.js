@@ -692,7 +692,7 @@ async function initializeApp() {
         html: `
           <div style="text-align: center;">
             <div style="font-size: 2em; margin: 10px 0;">📦</div>
-            <p><strong>${downloadedGamesCount}</strong> juego${downloadedGamesCount > 1 ? 's' : ''} descargado${downloadedGamesCount > 1 ? 's' : ''}</p>
+            <p><strong>${downloadedGamesCount}</strong> juego${downloadedGamesCount >= 1 ? 's' : ''} descargado${downloadedGamesCount >= 1 ? 's' : ''}</p>
             <p style="font-size: 0.9em; color: #888;">Usa el botón "Ver Descargas" para gestionarlos</p>
           </div>
         `,
