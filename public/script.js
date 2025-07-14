@@ -681,6 +681,32 @@ async function initializeApp() {
     // Ocultar loading
     hideLoading();
     
+    // Verificar cuántos juegos descargados hay y mostrar alerta si es necesario
+    const downloadedGamesCount = allGames.filter(game => game.status === 2).length;
+    
+    if (downloadedGamesCount > 0) {
+      // Mostrar alerta flotante con el conteo
+      Swal.fire({
+        ...gamingAlert,
+        title: '📥 Juegos Descargados Encontrados',
+        html: `
+          <div style="text-align: center;">
+            <div style="font-size: 2em; margin: 10px 0;">📦</div>
+            <p><strong>${downloadedGamesCount}</strong> juego${downloadedGamesCount > 1 ? 's' : ''} descargado${downloadedGamesCount > 1 ? 's' : ''}</p>
+            <p style="font-size: 0.9em; color: #888;">Usa el botón "Ver Descargas" para gestionarlos</p>
+          </div>
+        `,
+        icon: 'info',
+        confirmButtonText: 'Entendido',
+        timer: 4000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end',
+        width: '300px'
+      });
+    }
+    
     console.log('✅ Aplicación inicializada correctamente');
     
   } catch (error) {
