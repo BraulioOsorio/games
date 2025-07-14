@@ -52,7 +52,6 @@ async function fetchGames() {
     const response = await fetch(`${API_BASE_URL}/api/games`);
     if (!response.ok) throw new Error('Error obteniendo juegos');
     const games = await response.json();
-    console.log('Juegos cargados desde la API:', games);
     allGames = games;
     
     // Solo incluir en remainingWords los juegos disponibles (status = 1)
@@ -683,15 +682,9 @@ async function initializeApp() {
     hideLoading();
     
     // Verificar cuántos juegos descargados hay y mostrar alerta si es necesario
-    console.log('Total de juegos cargados:', allGames.length);
-    console.log('Juegos con status 2 (descargados):', allGames.filter(game => game.status === 2));
-    console.log('Todos los juegos:', allGames);
-    
-    const downloadedGamesCount = allGames.filter(game => game.status === 2).length;
-    console.log('Conteo de juegos descargados:', downloadedGamesCount);
+    const downloadedGamesCount = downloadList.filter(game => game.status === 2).length;
     
     if (downloadedGamesCount > 0) {
-      console.log('Mostrando alerta de juegos descargados...');
       // Mostrar alerta flotante con el conteo
       Swal.fire({
         ...gamingAlert,
@@ -712,12 +705,7 @@ async function initializeApp() {
         position: 'top-end',
         width: '300px'
       });
-    } else {
-      console.log('No se encontraron juegos descargados para mostrar alerta');
     }
-    
-    console.log('✅ Aplicación inicializada correctamente');
-    
   } catch (error) {
     hideLoading();
     console.error('Error inicializando aplicación:', error);
