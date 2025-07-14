@@ -424,6 +424,18 @@ button:disabled:hover {
   color: #1a1a1a !important;
 }
 
+.delete-btn {
+  background: #1a1a3d !important;
+  border-color: #4444a6 !important;
+  color: #9999d1 !important;
+  text-shadow: 0 0 3px #4444a6 !important;
+}
+
+.delete-btn:hover {
+  background: #4444a6 !important;
+  color: #1a1a1a !important;
+}
+
 .small-btn {
   padding: 8px 12px !important;
   font-size: 0.6rem !important;

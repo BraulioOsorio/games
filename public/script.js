@@ -383,6 +383,9 @@ function updateDownloadTable() {
         <button class="danger-btn small-btn" onclick="removeFromDownloadList('${download.name}')">
           Restaurar
         </button>
+        <button class="delete-btn small-btn" onclick="hideGamePermanently('${download.name}')">
+          Eliminar
+        </button>
       </div>
     `;
     tbody.appendChild(row);
@@ -485,6 +488,58 @@ async function removeFromDownloadList(gameName) {
     }
   } catch (error) {
     showError('Error restaurando juego: ' + error.message);
+  }
+}
+
+// Ocultar juego permanentemente (cambiar estado a 3)
+async function hideGamePermanently(gameName) {
+  try {
+    const result = await Swal.fire({
+      ...gamingAlert,
+      title: '🗑️ ¿Eliminar Permanentemente?',
+      html: `<strong>"${gameName}"</strong><br><br>⚠️ <strong>ATENCIÓN:</strong> Esta acción es irreversible.<br><br>El juego será ocultado permanentemente y no aparecerá más en ninguna lista.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: '🗑️ Sí, Eliminar',
+      cancelButtonText: '❌ Cancelar',
+      reverseButtons: true,
+      confirmButtonColor: '#dc143c'
+    });
+
+    if (result.isConfirmed) {
+      showLoading('Eliminando juego permanentemente...');
+      
+      const response = await fetch(`${API_BASE_URL}/api/games/${encodeURIComponent(gameName)}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Error eliminando juego');
+      }
+      
+      const result = await response.json();
+      hideLoading();
+      
+      // Actualizar listas locales
+      downloadList = downloadList.filter(d => d.name !== gameName);
+      
+      // Actualizar UI
+      updateDownloadTable();
+      
+      Swal.fire({
+        ...gamingAlert,
+        title: '🗑️ ¡Juego Eliminado!',
+        html: `<strong>"${gameName}"</strong><br><br>Ha sido eliminado permanentemente de todas las listas.`,
+        icon: 'success',
+        confirmButtonText: 'Entendido',
+        timer: 3000,
+        timerProgressBar: true
+      });
+    }
+  } catch (error) {
+    hideLoading();
+    showError('Error eliminando juego: ' + error.message);
   }
 }
 
