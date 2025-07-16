@@ -262,6 +262,32 @@ app.get('/api/stats', async (req, res) => {
   }
 });
 
+// Buscar juegos por nombre
+app.get('/api/search', async (req, res) => {
+  const { q } = req.query;
+  
+  if (!q || q.trim() === '') {
+    return res.status(400).json({ error: 'El término de búsqueda es requerido' });
+  }
+
+  try {
+    const searchTerm = `%${q.trim().toUpperCase()}%`;
+    const result = await pool.query(
+      'SELECT * FROM games WHERE name ILIKE $1 ORDER BY name',
+      [searchTerm]
+    );
+    
+    res.json({
+      results: result.rows,
+      count: result.rows.length,
+      searchTerm: q.trim()
+    });
+  } catch (err) {
+    console.error('Error buscando juegos:', err);
+    res.status(500).json({ error: 'Error del servidor' });
+  }
+});
+
 // Ruta para servir tu aplicación frontend
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

@@ -730,6 +730,31 @@ document.addEventListener('DOMContentLoaded', () => {
       showError('Por favor ingresa un nombre válido de al menos 3 caracteres');
     }
   });
+  
+  // Event listener para búsqueda con Enter
+  document.getElementById('search-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      searchGames();
+    }
+  });
+  
+  // Event listener para búsqueda en tiempo real (opcional)
+  let searchTimeout;
+  document.getElementById('search-input').addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    const searchTerm = e.target.value.trim();
+    
+    if (searchTerm.length >= 2) {
+      // Búsqueda automática después de 500ms de inactividad
+      searchTimeout = setTimeout(() => {
+        searchGames();
+      }, 500);
+    } else if (searchTerm.length === 0) {
+      // Limpiar resultados si el campo está vacío
+      clearSearch();
+    }
+  });
 });
 
 // Cerrar modal cuando se hace clic fuera de él
@@ -738,3 +763,120 @@ document.addEventListener('click', (e) => {
     closeDownloadModal();
   }
 });
+
+// ------ FUNCIONES DEL BUSCADOR ------
+
+// Buscar juegos en la base de datos
+async function searchGames() {
+  const searchInput = document.getElementById('search-input');
+  const searchTerm = searchInput.value.trim();
+  
+  if (!searchTerm) {
+    Swal.fire({
+      ...gamingAlert,
+      title: '⚠️ Campo Vacío',
+      text: 'Por favor ingresa un término de búsqueda.',
+      icon: 'warning',
+      confirmButtonText: 'Entendido'
+    });
+    return;
+  }
+  
+  try {
+    showLoading('Buscando juegos...');
+    
+    const response = await fetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(searchTerm)}`);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Error en la búsqueda');
+    }
+    
+    const data = await response.json();
+    hideLoading();
+    
+    displaySearchResults(data.results, data.count, data.searchTerm);
+    
+  } catch (error) {
+    hideLoading();
+    console.error('Error:', error);
+    showError('Error buscando juegos: ' + error.message);
+  }
+}
+
+// Mostrar resultados de búsqueda
+function displaySearchResults(results, count, searchTerm) {
+  const searchResults = document.getElementById('search-results');
+  const searchCount = document.getElementById('search-count');
+  const searchTableBody = document.getElementById('search-table-body');
+  
+  // Actualizar contador
+  searchCount.textContent = `${count} juego${count !== 1 ? 's' : ''} encontrado${count !== 1 ? 's' : ''}`;
+  
+  // Limpiar tabla anterior
+  searchTableBody.innerHTML = '';
+  
+  if (count === 0) {
+    // Mostrar mensaje de no resultados
+    searchTableBody.innerHTML = `
+      <div class="table-row">
+        <div class="table-cell" style="width: 100%; text-align: center; padding: 20px; color: #888;">
+          No se encontraron juegos que coincidan con "${searchTerm}"
+        </div>
+      </div>
+    `;
+  } else {
+    // Mostrar resultados
+    results.forEach((game, index) => {
+      const row = document.createElement('div');
+      row.className = 'table-row';
+      
+      // Determinar el estado del juego
+      let statusText, statusClass;
+      switch (game.status) {
+        case 1:
+          statusText = 'Disponible';
+          statusClass = 'available';
+          break;
+        case 2:
+          statusText = 'Descargado';
+          statusClass = 'downloaded';
+          break;
+        case 3:
+          statusText = 'Oculto';
+          statusClass = 'hidden';
+          break;
+        default:
+          statusText = 'Desconocido';
+          statusClass = 'hidden';
+      }
+      
+      row.innerHTML = `
+        <div class="table-cell">${index + 1}</div>
+        <div class="table-cell">${game.name}</div>
+        <div class="table-cell">
+          <span class="status-badge ${statusClass}">${statusText}</span>
+        </div>
+      `;
+      
+      searchTableBody.appendChild(row);
+    });
+  }
+  
+  // Mostrar resultados
+  searchResults.style.display = 'block';
+  
+  // Scroll suave hasta los resultados
+  searchResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Limpiar búsqueda
+function clearSearch() {
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+  
+  searchInput.value = '';
+  searchResults.style.display = 'none';
+  searchInput.focus();
+}
+
+

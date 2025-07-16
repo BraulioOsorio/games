@@ -62,6 +62,36 @@
       </div>
     </form>
   </div>
+
+  <!-- Buscador de juegos -->
+  <div class="search-container">
+    <h2>Buscador de Juegos</h2>
+    <div class="search-form">
+      <div class="input-group">
+        <input type="text" id="search-input" placeholder="Buscar juegos..." autocomplete="off">
+        <button type="button" onclick="searchGames()">Buscar</button>
+        <button type="button" onclick="clearSearch()" class="clear-btn">Limpiar</button>
+      </div>
+    </div>
+    
+    <!-- Resultados de búsqueda -->
+    <div id="search-results" class="search-results" style="display: none;">
+      <div class="search-header">
+        <h3>Resultados de búsqueda</h3>
+        <span id="search-count">0 juegos encontrados</span>
+      </div>
+      <div id="search-table-container" class="search-table">
+        <div class="table-header">
+          <div class="table-cell">#</div>
+          <div class="table-cell">Juego</div>
+          <div class="table-cell">Estado</div>
+        </div>
+        <div id="search-table-body">
+          <!-- Aquí se agregarán los resultados dinámicamente -->
+        </div>
+      </div>
+    </div>
+  </div>
   
   <!-- Modal para mostrar la lista de descargas -->
   <div id="downloadModal" class="modal">
