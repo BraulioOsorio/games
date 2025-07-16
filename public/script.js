@@ -741,15 +741,21 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Event listener para búsqueda en tiempo real (opcional)
   let searchTimeout;
+  let isSearching = false;
   document.getElementById('search-input').addEventListener('input', (e) => {
     clearTimeout(searchTimeout);
     const searchTerm = e.target.value.trim();
     
-    if (searchTerm.length >= 2) {
-      // Búsqueda automática después de 500ms de inactividad
+    if (searchTerm.length >= 3) {
+      // Búsqueda automática después de 800ms de inactividad (más suave)
       searchTimeout = setTimeout(() => {
-        searchGames();
-      }, 500);
+        if (!isSearching) {
+          isSearching = true;
+          searchGames().finally(() => {
+            isSearching = false;
+          });
+        }
+      }, 800);
     } else if (searchTerm.length === 0) {
       // Limpiar resultados si el campo está vacío
       clearSearch();
@@ -862,11 +868,17 @@ function displaySearchResults(results, count, searchTerm) {
     });
   }
   
-  // Mostrar resultados
+  // Mostrar resultados con animación suave
   searchResults.style.display = 'block';
+  searchResults.style.opacity = '0';
+  searchResults.style.transform = 'translateY(20px)';
   
-  // Scroll suave hasta los resultados
-  searchResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Animar la aparición suavemente
+  setTimeout(() => {
+    searchResults.style.transition = 'all 0.4s ease-out';
+    searchResults.style.opacity = '1';
+    searchResults.style.transform = 'translateY(0)';
+  }, 50);
 }
 
 // Limpiar búsqueda
@@ -874,8 +886,19 @@ function clearSearch() {
   const searchInput = document.getElementById('search-input');
   const searchResults = document.getElementById('search-results');
   
+  // Animar la desaparición suavemente
+  searchResults.style.transition = 'all 0.3s ease-in';
+  searchResults.style.opacity = '0';
+  searchResults.style.transform = 'translateY(-10px)';
+  
+  setTimeout(() => {
+    searchResults.style.display = 'none';
+    searchResults.style.opacity = '';
+    searchResults.style.transform = '';
+    searchResults.style.transition = '';
+  }, 300);
+  
   searchInput.value = '';
-  searchResults.style.display = 'none';
   searchInput.focus();
 }
 

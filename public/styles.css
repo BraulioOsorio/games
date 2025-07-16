@@ -846,6 +846,8 @@ button:disabled:hover {
   border: 2px solid #3a0066;
   box-shadow: 0 0 15px rgba(80, 0, 160, 0.4);
   margin-bottom: 20px;
+  min-height: 200px;
+  transition: all 0.3s ease;
 }
 
 .search-container h2 {
@@ -922,6 +924,9 @@ button:disabled:hover {
 
 .search-results {
   margin-top: 20px;
+  transition: all 0.4s ease-out;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .search-header {
@@ -1016,6 +1021,7 @@ button:disabled:hover {
   background: rgba(112, 85, 163, 0.15);
   transform: translateX(2px);
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(58, 0, 102, 0.2);
 }
 
 .search-table .table-row .table-cell {
