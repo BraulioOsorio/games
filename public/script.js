@@ -685,25 +685,38 @@ async function initializeApp() {
     const downloadedGamesCount = downloadList.filter(game => game.status === 2).length;
     
     if (downloadedGamesCount > 0) {
-      // Mostrar alerta flotante con el conteo
+      // Mostrar alerta centrada con mejor diseño
       Swal.fire({
         ...gamingAlert,
-        title: '📥 Juegos Descargados Encontrados',
+        title: '📦 ¡Juegos Descargados Disponibles!',
         html: `
-          <div style="text-align: center;">
-            <div style="font-size: 2em; margin: 10px 0;">📦</div>
-            <p><strong>${downloadedGamesCount}</strong> juego${downloadedGamesCount >= 1 ? 's' : ''} descargado${downloadedGamesCount >= 1 ? 's' : ''}</p>
-            <p style="font-size: 0.9em; color: #888;">Usa el botón "Ver Descargas" para gestionarlos</p>
+          <div style="text-align: center; padding: 20px 0;">
+            <div style="font-size: 3em; margin: 15px 0; animation: bounce 2s infinite;">📦</div>
+            <div style="background: linear-gradient(135deg, rgba(58, 0, 102, 0.3), rgba(112, 85, 163, 0.2)); padding: 15px; border-radius: 10px; border: 1px solid #3a0066; margin: 15px 0;">
+              <p style="font-size: 1.2em; margin: 10px 0; color: #7055a3;"><strong>${downloadedGamesCount}</strong> juego${downloadedGamesCount !== 1 ? 's' : ''} descargado${downloadedGamesCount !== 1 ? 's' : ''}</p>
+            </div>
+            <p style="font-size: 0.9em; color: #b3b3b3; margin: 15px 0;">Usa el botón <strong>"Ver Descargas"</strong> para gestionarlos</p>
+            <div style="background: rgba(58, 0, 102, 0.2); padding: 10px; border-radius: 8px; border: 1px solid #3a0066; margin-top: 15px;">
+              <p style="font-size: 0.8em; color: #888; margin: 0;">💡 Puedes restaurar juegos o eliminarlos permanentemente</p>
+            </div>
           </div>
         `,
         icon: 'info',
-        confirmButtonText: 'Entendido',
-        timer: 4000,
+        confirmButtonText: '🎮 Ver Descargas',
+        cancelButtonText: 'Cerrar',
+        showCancelButton: true,
+        reverseButtons: true,
+        timer: 8000,
         timerProgressBar: true,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end',
-        width: '300px'
+        width: '450px',
+        customClass: {
+          ...gamingAlert.customClass,
+          popup: 'gaming-popup downloaded-alert'
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          showDownloadModal();
+        }
       });
     }
   } catch (error) {
