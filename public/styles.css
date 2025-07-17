@@ -1095,9 +1095,9 @@ button:disabled:hover {
 }
 
 .search-table .table-header .table-cell:nth-child(2) {
-  text-align: center;
-  justify-content: center;
-  padding-left: 0;
+  text-align: left;
+  justify-content: flex-start;
+  padding-left: 15px;
   padding-right: 0;
 }
 
