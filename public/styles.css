@@ -63,7 +63,10 @@ body {
   background-size: 200% 200%;
   animation: bgPulse 10s infinite alternate;
   overflow-y: auto;
-  padding: 40px 20px; /* Márgenes arriba y abajo */
+  padding-top: 60px;
+  padding-bottom: 60px;
+  padding-left: 20px;
+  padding-right: 20px;
   box-sizing: border-box;
 }
 
@@ -884,9 +887,13 @@ button:disabled:hover {
   border: 2px solid #3a0066;
   box-shadow: 0 0 20px rgba(80, 0, 160, 0.4);
   margin-bottom: 20px;
-  min-height: 200px;
+  height: 600px; /* Altura fija para acomodar la tabla */
+  min-height: 600px;
+  max-height: 600px;
   transition: all 0.3s ease;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .search-container::before {
@@ -910,6 +917,7 @@ button:disabled:hover {
 
 .search-form {
   margin-bottom: 20px;
+  flex-shrink: 0;
 }
 
 .search-form .input-group {
@@ -978,6 +986,9 @@ button:disabled:hover {
   transition: all 0.4s ease-out;
   opacity: 1;
   transform: translateY(0);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .search-header {
@@ -1039,13 +1050,14 @@ button:disabled:hover {
   border: 2px solid #3a0066;
   overflow: hidden;
   height: 400px; /* Altura fija */
-  width: 550px; /* Ancho fijo para acomodar las columnas */
-  max-width: 550px;
+  width: 100%; /* Ancho 100% del contenedor */
+  max-width: 100%;
   overflow-y: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   margin-top: 10px;
   margin-left: auto;
   margin-right: auto;
+  flex: 1;
 }
 
 /* Scroll personalizado para la tabla */
