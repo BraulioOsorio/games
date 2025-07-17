@@ -1098,6 +1098,7 @@ button:disabled:hover {
   text-align: center;
   justify-content: center;
   padding-left: 0;
+  padding-right: 0;
 }
 
 .search-table .table-header .table-cell {
