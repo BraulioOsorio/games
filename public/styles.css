@@ -1061,24 +1061,27 @@ button:disabled:hover {
 }
 
 .search-table .table-header {
-  background: rgba(58, 0, 102, 0.3);
+  background: rgba(58, 0, 102, 0.4);
   display: flex;
   border-bottom: 2px solid #3a0066;
   position: sticky;
   top: 0;
   z-index: 20;
+  padding: 20px 0;
 }
 
 .search-table .table-header .table-cell {
   color: #7055a3;
   text-shadow: 0 0 3px #3a0066;
   font-weight: bold;
-  padding: 15px;
+  padding: 20px 15px;
   text-align: center;
   border-right: 2px solid #3a0066;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
 }
 
 .search-table .table-header .table-cell:last-child {
@@ -1099,14 +1102,15 @@ button:disabled:hover {
 }
 
 .search-table .table-row .table-cell {
-  padding: 12px 15px;
+  padding: 15px 20px;
   text-align: center;
   border-right: 1px solid #3a0066;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: #b3b3b3;
+  min-height: 50px;
 }
 
 .search-table .table-row .table-cell:last-child {
