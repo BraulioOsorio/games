@@ -355,11 +355,17 @@ async function addCurrentWordToDownloadList() {
 }
 
 // Mostrar el modal de descargas
-function showDownloadModal() {
-  fetchDownloads().then(() => {
+async function showDownloadModal() {
+  try {
+    showLoading('Cargando lista de descargas...');
+    await fetchDownloads();
     updateDownloadTable();
+    hideLoading();
     document.getElementById('downloadModal').style.display = 'flex';
-  });
+  } catch (error) {
+    hideLoading();
+    showError('Error cargando descargas: ' + error.message);
+  }
 }
 
 // Cerrar el modal de descargas
