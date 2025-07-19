@@ -1109,6 +1109,7 @@ button:disabled:hover {
   font-size: 0.75rem;
   text-shadow: 0 0 3px #3a0066;
   letter-spacing: 0.5px;
+  justify-content: center;
 }
 
 .search-table .table-header .table-cell:nth-child(1) { 
@@ -1116,21 +1117,29 @@ button:disabled:hover {
   min-width: 80px;
   max-width: 80px;
   color: #7055a3;
-  flex-shrink: 0
+  flex-shrink: 0;
+  text-align: center;
+  justify-content: center;
 }
+
 .search-table .table-header .table-cell:nth-child(2) { 
   width: 350px; 
   min-width: 350px;
   max-width: 350px;
-  text-align: left;
-  padding-left: 15px;
-  flex-shrink: 0
+  text-align: center;
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+  flex-shrink: 0;
 }
+
 .search-table .table-header .table-cell:nth-child(3) { 
   width: 120px; 
   min-width: 120px;
-  max-width:120px;
+  max-width: 120px;
   flex-shrink: 0;
+  text-align: center;
+  justify-content: center;
 }
 
 .search-table .table-row {
@@ -1174,14 +1183,17 @@ button:disabled:hover {
   font-weight: bold;
   color: #7055a3;
   flex-shrink: 0;
+  text-align: center;
+  justify-content: center;
 }
+
 .search-table .table-row .table-cell:nth-child(2) { 
   width: 350px;
   min-width: 350px;
   max-width: 350px;
-  text-align: left; 
-  justify-content: flex-start;
-  font-size: 0.65em;
+  text-align: center; 
+  justify-content: center;
+  font-size: 0.65rem;
   padding-left: 15px;
   padding-right: 15px;
   flex-shrink: 0;
@@ -1189,11 +1201,14 @@ button:disabled:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 .search-table .table-row .table-cell:nth-child(3) { 
   width: 120px;
   min-width: 120px;
-  max-width:120px;
+  max-width: 120px;
   flex-shrink: 0;
+  text-align: center;
+  justify-content: center;
 }
 
 .search-table .table-row .table-cell .status-badge {
