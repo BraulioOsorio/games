@@ -234,7 +234,7 @@ function updateStatsChart(stats) {
   statsChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Disponibles', 'Descargados', 'Ocultos'],
+      labels: ['Disponibles', 'Juegos Descargados', 'Juegos Completados'],
       datasets: [{
         data: [stats.available, stats.downloaded, stats.hidden],
         backgroundColor: [
