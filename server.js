@@ -146,7 +146,7 @@ app.post('/api/downloads', async (req, res) => {
 app.get('/api/downloads', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM games WHERE status = $1 ORDER BY added_date DESC',
+      'SELECT * FROM games WHERE status = $1 ORDER BY added_date',
       [2]
     );
     res.json(result.rows);
