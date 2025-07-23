@@ -7,6 +7,7 @@ let allGames = [];
 let downloadList = [];
 let usedWords = [];
 let remainingWords = [];
+let statsChart = null;
 
 const apiKey = 'c6beb639913a47a8b4148f99ab751619';
 let imageTimeout;
@@ -197,6 +198,96 @@ async function populateDatabase() {
   }
 }
 
+// Obtener estadísticas de la base de datos
+async function fetchStats() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/stats`);
+    if (!response.ok) throw new Error('Error obteniendo estadísticas');
+    const stats = await response.json();
+    updateStatsDisplay(stats);
+    updateStatsChart(stats);
+    return stats;
+  } catch (error) {
+    console.error('Error:', error);
+    showError('Error cargando estadísticas');
+    return null;
+  }
+}
+
+// Actualizar la visualización de estadísticas
+function updateStatsDisplay(stats) {
+  document.getElementById('total-games').textContent = stats.total;
+  document.getElementById('available-games').textContent = stats.available;
+  document.getElementById('downloaded-games').textContent = stats.downloaded;
+  document.getElementById('hidden-games').textContent = stats.hidden;
+}
+
+// Crear/actualizar el gráfico de estadísticas
+function updateStatsChart(stats) {
+  const ctx = document.getElementById('statsChart').getContext('2d');
+  
+  // Destruir gráfico existente si hay uno
+  if (statsChart) {
+    statsChart.destroy();
+  }
+  
+  statsChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Disponibles', 'Descargados', 'Ocultos'],
+      datasets: [{
+        data: [stats.available, stats.downloaded, stats.hidden],
+        backgroundColor: [
+          'rgba(112, 85, 163, 0.8)',   // Morado para disponibles
+          'rgba(76, 175, 80, 0.8)',    // Verde para descargados
+          'rgba(244, 67, 54, 0.8)'     // Rojo para ocultos
+        ],
+        borderColor: [
+          'rgba(112, 85, 163, 1)',
+          'rgba(76, 175, 80, 1)',
+          'rgba(244, 67, 54, 1)'
+        ],
+        borderWidth: 2,
+        hoverBackgroundColor: [
+          'rgba(112, 85, 163, 1)',
+          'rgba(76, 175, 80, 1)',
+          'rgba(244, 67, 54, 1)'
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#b3b3b3',
+            font: {
+              family: 'Press Start 2P',
+              size: 10
+            },
+            padding: 15
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          titleColor: '#7055a3',
+          bodyColor: '#b3b3b3',
+          borderColor: '#3a0066',
+          borderWidth: 1,
+          cornerRadius: 8,
+          displayColors: true
+        }
+      },
+      animation: {
+        animateRotate: true,
+        animateScale: true
+      }
+    }
+  });
+}
+
 // Funciones de utilidad
 function showError(message) {
   hideLoading();
@@ -333,6 +424,9 @@ async function addCurrentWordToDownloadList() {
     updateWordCount();
     updateProgressBar();
     document.getElementById('add-word-btn').disabled = true;
+    
+    // Actualizar estadísticas
+    await fetchStats();
     
     // Mostrar notificación
     Swal.fire({
@@ -683,6 +777,10 @@ async function initializeApp() {
     // Cargar descargas
     showLoading('Cargando historial de descargas...');
     await fetchDownloads();
+    
+    // Cargar estadísticas
+    showLoading('Cargando estadísticas...');
+    await fetchStats();
     
     // Ocultar loading
     hideLoading();

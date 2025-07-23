@@ -9,6 +9,8 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <!-- Loading indicator -->
@@ -61,6 +63,32 @@
         <button type="submit">Agregar Palabra</button>
       </div>
     </form>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="stats-container">
+    <h2>📊 Estadísticas de Juegos</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="total-games">0</div>
+        <div class="stat-label">Total Juegos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="available-games">0</div>
+        <div class="stat-label">Disponibles</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="downloaded-games">0</div>
+        <div class="stat-label">Descargados</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="hidden-games">0</div>
+        <div class="stat-label">Ocultos</div>
+      </div>
+    </div>
+    <div class="chart-container">
+      <canvas id="statsChart"></canvas>
+    </div>
   </div>
 
   <!-- Buscador de juegos -->
