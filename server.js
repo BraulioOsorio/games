@@ -129,9 +129,10 @@ app.post('/api/downloads', async (req, res) => {
 
   try {
     // Solo cambiar status a 2 (descargado)
+    const datetime = new Date();
     await pool.query(
-      'UPDATE games SET status = $1 WHERE name = $2',
-      [2, gameName]
+      'UPDATE games SET status = $1, added_date = $2 WHERE name = $3',
+      [2, datetime, gameName]
     );
 
     res.json({ message: 'Juego marcado como descargado' });
