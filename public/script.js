@@ -222,6 +222,95 @@ function updateStatsDisplay(stats) {
   document.getElementById('hidden-games').textContent = stats.hidden;
 }
 
+// Función para migrar a Supabase
+async function migrateToSupabase() {
+  try {
+    // Deshabilitar botón durante la migración
+    const migrateBtn = document.getElementById('migrate-supabase-btn');
+    migrateBtn.disabled = true;
+    migrateBtn.textContent = '🔄 Migrando...';
+    
+    // Mostrar loading
+    showLoading();
+    
+    // Mostrar confirmación
+    const result = await Swal.fire({
+      ...gamingAlert,
+      title: '🚀 ¿Migrar a Supabase?',
+      text: 'Esto migrará todos tus juegos a Supabase para que nunca más pierdas datos. ¿Continuar?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: '¡Sí, Migrar!',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#667eea',
+      cancelButtonColor: '#d33'
+    });
+    
+    if (!result.isConfirmed) {
+      hideLoading();
+      migrateBtn.disabled = false;
+      migrateBtn.textContent = '🚀 Migrar a Supabase';
+      return;
+    }
+    
+    // Llamar a la API de migración
+    const response = await fetch('/api/migrate-to-supabase', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+    
+    const resultData = await response.json();
+    
+    // Mostrar éxito
+    await Swal.fire({
+      ...gamingAlert,
+      title: '🎉 ¡Migración Exitosa!',
+      html: `
+        <div style="text-align: left; margin: 20px 0;">
+          <p><strong>✅ Total migrado:</strong> ${resultData.totalGames} juegos</p>
+          <p><strong>📊 Estado 1 (Disponible):</strong> ${resultData.status1} juegos</p>
+          <p><strong>📥 Estado 2 (Descargado):</strong> ${resultData.status2} juegos</p>
+          <p><strong>🚫 Estado 3 (Oculto):</strong> ${resultData.status3} juegos</p>
+        </div>
+        <p style="color: #667eea; font-weight: bold;">
+          🚀 Tu aplicación ahora usa Supabase y nunca más perderás datos
+        </p>
+      `,
+      icon: 'success',
+      confirmButtonText: '¡Perfecto!',
+      confirmButtonColor: '#667eea'
+    });
+    
+    // Recargar la aplicación para usar Supabase
+    location.reload();
+    
+  } catch (error) {
+    console.error('Error en migración:', error);
+    
+    await Swal.fire({
+      ...gamingAlert,
+      title: '❌ Error en la Migración',
+      text: `No se pudo migrar a Supabase: ${error.message}`,
+      icon: 'error',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#d33'
+    });
+    
+  } finally {
+    hideLoading();
+    const migrateBtn = document.getElementById('migrate-supabase-btn');
+    migrateBtn.disabled = false;
+    migrateBtn.textContent = '🚀 Migrar a Supabase';
+    hideLoading();
+  }
+}
+
 // Crear/actualizar el gráfico de estadísticas
 function updateStatsChart(stats) {
   const ctx = document.getElementById('statsChart').getContext('2d');

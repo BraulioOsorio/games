@@ -263,6 +263,93 @@ app.get('/api/stats', async (req, res) => {
   }
 });
 
+// Migrar a Supabase
+app.post('/api/migrate-to-supabase', async (req, res) => {
+  try {
+    console.log('🚀 Iniciando migración a Supabase...');
+    
+    // Leer archivo de backup
+    const fs = require('fs');
+    const path = require('path');
+    const backupFile = path.join(__dirname, '3358.dat');
+    
+    if (!fs.existsSync(backupFile)) {
+      return res.status(404).json({ error: 'Archivo de backup no encontrado' });
+    }
+    
+    // Parsear archivo de backup
+    const content = fs.readFileSync(backupFile, 'utf8');
+    const lines = content.trim().split('\n');
+    const games = [];
+    
+    lines.forEach(line => {
+      const parts = line.split('\t');
+      if (parts.length >= 4) {
+        const [id, name, status, date] = parts;
+        games.push({
+          id: parseInt(id),
+          name: name.trim(),
+          status: parseInt(status),
+          added_date: new Date(date.trim()).toISOString()
+        });
+      }
+    });
+    
+    console.log(`📁 Juegos leídos del backup: ${games.length}`);
+    
+    // Crear tabla en Supabase usando la API
+    const { createClient } = require('@supabase/supabase-js');
+    
+    const supabaseUrl = 'https://iityjrvlzgmlbuyvjdra.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlpdHlqcnZsemdtbGJ1eXZqZHJhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwMzIxMDIsImV4cCI6MjA3MDYwODEwMn0.a1S3wuGK5QYZRuhRIaqUAkNKQD7l-6zLEnj03slR2ys';
+    
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    
+    // Limpiar tabla existente en Supabase
+    console.log('🧹 Limpiando tabla en Supabase...');
+    const { error: deleteError } = await supabase
+      .from('games')
+      .delete()
+      .neq('id', 0);
+    
+    if (deleteError) {
+      console.log('⚠️ Error limpiando tabla:', deleteError.message);
+    }
+    
+    // Insertar juegos en Supabase
+    console.log('📤 Insertando juegos en Supabase...');
+    const { data, error } = await supabase
+      .from('games')
+      .insert(games);
+    
+    if (error) {
+      console.error('❌ Error insertando en Supabase:', error);
+      return res.status(500).json({ error: `Error insertando en Supabase: ${error.message}` });
+    }
+    
+    // Contar juegos por estado
+    const statusCounts = {};
+    games.forEach(game => {
+      statusCounts[game.status] = (statusCounts[game.status] || 0) + 1;
+    });
+    
+    console.log('✅ Migración completada exitosamente');
+    
+    res.json({
+      success: true,
+      totalGames: games.length,
+      status1: statusCounts[1] || 0,
+      status2: statusCounts[2] || 0,
+      status3: statusCounts[3] || 0,
+      message: 'Migración a Supabase completada exitosamente'
+    });
+    
+  } catch (error) {
+    console.error('❌ Error en migración a Supabase:', error);
+    res.status(500).json({ error: `Error en migración: ${error.message}` });
+  }
+});
+
 // Buscar juegos por nombre
 app.get('/api/search', async (req, res) => {
   const { q } = req.query;
