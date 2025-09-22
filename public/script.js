@@ -88,13 +88,21 @@ async function fetchDownloads() {
 
 async function addGameToDatabase(gameName) {
   try {
+    console.log('🎮 Intentando agregar juego:', gameName);
+    console.log('🎮 Tipo de dato:', typeof gameName);
+    console.log('🎮 Longitud:', gameName?.length);
+    
+    if (!gameName || gameName.trim() === '') {
+      throw new Error('El nombre del juego no puede estar vacío');
+    }
+    
     showLoading('Agregando juego a la base de datos...');
     const response = await fetch(`${API_BASE_URL}/api/games`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ gameName: gameName })
+      body: JSON.stringify({ gameName: gameName.trim() })
     });
     
     if (!response.ok) {
@@ -807,6 +815,10 @@ function addNewWord() {
       const input = document.getElementById('new-word-input');
       const value = input.value.trim().toUpperCase();
       
+      console.log('🎯 Modal - Input encontrado:', input);
+      console.log('🎯 Modal - Valor obtenido:', value);
+      console.log('🎯 Modal - Longitud:', value.length);
+      
       if (!value) {
         Swal.showValidationMessage('Por favor ingresa un nombre válido');
         return false;
@@ -926,8 +938,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Event listener para el formulario de agregar nuevas palabras
   document.getElementById('add-word-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    const input = document.getElementById('new-word-input');
+    const input = document.getElementById('form-word-input');
     const value = input.value.trim().toUpperCase();
+    
+    console.log('📝 Formulario - Valor obtenido:', value);
+    console.log('📝 Formulario - Longitud:', value.length);
     
     if (value && value.length >= 3) {
       addNewWordToDictionary(value);
