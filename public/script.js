@@ -94,7 +94,7 @@ async function addGameToDatabase(gameName) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name: gameName })
+      body: JSON.stringify({ gameName: gameName })
     });
     
     if (!response.ok) {
