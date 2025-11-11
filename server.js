@@ -73,14 +73,16 @@ app.post('/api/downloads', async (req, res) => {
       return res.status(400).json({ error: 'El nombre del juego es requerido' });
     }
     
+    const downloadedAt = new Date().toISOString();
+    
     const { error } = await supabase
       .from('games')
-      .update({ status: 2 })
+      .update({ status: 2, added_date: downloadedAt })
       .eq('name', gameName);
     
     if (error) throw error;
     
-    res.json({ message: 'Juego marcado como descargado' });
+    res.json({ message: 'Juego marcado como descargado', downloadedAt });
   } catch (err) {
     console.error('Error marcando descarga:', err);
     res.status(500).json({ error: 'Error del servidor' });
@@ -94,7 +96,7 @@ app.get('/api/downloads', async (req, res) => {
       .from('games')
       .select('*')
       .eq('status', 2)
-      .order('added_date', { ascending: false });
+      .order('added_date', { ascending: true });
     
     if (error) throw error;
     
