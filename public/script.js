@@ -12,6 +12,8 @@ let statsChart = null;
 const apiKey = 'c6beb639913a47a8b4148f99ab751619';
 let imageTimeout;
 let currentSearchFilter = 'all'; // Variable para el filtro de búsqueda actual
+let gameHistory = []; // Historial de juegos generados con fechas
+let currentGameInfo = null; // Información actual del juego desde RAWG
 
 // Funciones de loading
 function showLoading(message = 'Cargando...') {
@@ -431,6 +433,36 @@ async function fetchGameImage(gameName) {
   }
 }
 
+// Obtener información completa del juego desde RAWG
+async function fetchGameInfo(gameName) {
+  const url = `https://api.rawg.io/api/games?key=${apiKey}&search=${encodeURIComponent(gameName)}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    const game = data.results?.[0];
+    
+    if (!game) return null;
+    
+    return {
+      name: game.name,
+      image: game.background_image,
+      rating: game.rating,
+      ratingTop: game.rating_top,
+      released: game.released,
+      platforms: game.platforms?.map(p => p.platform.name) || [],
+      genres: game.genres?.map(g => g.name) || [],
+      description: game.description_raw || '',
+      metacritic: game.metacritic,
+      website: game.website,
+      slug: game.slug,
+      id: game.id
+    };
+  } catch (e) {
+    console.error('RAWG error:', e);
+    return null;
+  }
+}
+
 function scheduleImageLoad(word) {
   clearTimeout(imageTimeout);
   imageTimeout = setTimeout(async () => {
@@ -492,6 +524,37 @@ async function showRandomWord() {
     currentWord = gameName;
     usedWords.push(gameName);
     remainingWords.splice(randomIndex, 1);
+    
+    // Registrar en historial con fecha
+    const historyEntry = {
+      name: gameName,
+      date: new Date().toISOString(),
+      timestamp: Date.now()
+    };
+    gameHistory.push(historyEntry);
+    
+    // Mantener solo últimos 1000 registros para no sobrecargar
+    if (gameHistory.length > 1000) {
+      gameHistory = gameHistory.slice(-1000);
+    }
+    
+    // Guardar en localStorage
+    try {
+      localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
+    } catch (e) {
+      console.warn('No se pudo guardar historial:', e);
+    }
+    
+    // Obtener información completa del juego
+    currentGameInfo = null;
+    fetchGameInfo(gameName).then(info => {
+      currentGameInfo = info;
+      // Habilitar botón de info si hay información
+      const infoBtn = document.getElementById('info-btn');
+      if (info && infoBtn) {
+        infoBtn.disabled = false;
+      }
+    });
 
     // Esperar un poco antes de mostrar el nuevo juego
     setTimeout(() => {
@@ -522,6 +585,12 @@ async function showRandomWord() {
     setTimeout(() => {
       addBtn.classList.remove('pulse-effect');
     }, 1000);
+    
+    // Habilitar botón de info (se deshabilitará si no hay info)
+    const infoBtn = document.getElementById('info-btn');
+    if (infoBtn) {
+      infoBtn.disabled = true; // Se habilitará cuando cargue la info
+    }
 
     // Limpiar y ocultar la imagen antigua
     const imgEl = document.getElementById('game-img');
@@ -888,6 +957,9 @@ async function initializeApp() {
   try {
     showLoading('Inicializando aplicación...');
     
+    // Cargar historial desde localStorage
+    loadGameHistory();
+    
     // Cargar juegos desde la base de datos
     await fetchGames();
     
@@ -1034,6 +1106,9 @@ document.addEventListener('click', (e) => {
   if (e.target.id === 'downloadModal') {
     closeDownloadModal();
   }
+  if (e.target.id === 'gameInfoModal') {
+    closeGameInfoModal();
+  }
 });
 
 // ------ FUNCIONES DEL BUSCADOR ------
@@ -1173,6 +1248,279 @@ function displaySearchResults(results, count, searchTerm) {
     searchResults.style.opacity = '1';
     searchResults.style.transform = 'translateY(0)';
   }, 50);
+}
+
+// ------ FUNCIONES DE INFORMACIÓN DEL JUEGO ------
+
+// Mostrar información del juego
+async function showGameInfo() {
+  if (!currentWord) {
+    showError('No hay ningún juego seleccionado');
+    return;
+  }
+  
+  const modal = document.getElementById('gameInfoModal');
+  const body = document.getElementById('game-info-body');
+  const title = document.getElementById('game-info-title');
+  
+  modal.style.display = 'flex';
+  body.innerHTML = '<div class="loading-info">Cargando información...</div>';
+  title.textContent = currentWord;
+  
+  // Si ya tenemos la info, mostrarla, sino obtenerla
+  let info = currentGameInfo;
+  if (!info) {
+    showLoading('Obteniendo información del juego...');
+    info = await fetchGameInfo(currentWord);
+    hideLoading();
+    currentGameInfo = info;
+  }
+  
+  if (!info) {
+    body.innerHTML = `
+      <div class="no-game-info">
+        <p>No se encontró información adicional para este juego en RAWG.</p>
+        <p style="font-size: 0.6rem; color: #888; margin-top: 10px;">
+          Puedes buscar más información en <a href="https://rawg.io/search?query=${encodeURIComponent(currentWord)}" target="_blank" style="color: #7055a3;">RAWG.io</a>
+        </p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Formatear fecha de lanzamiento
+  const releaseDate = info.released ? new Date(info.released).toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }) : 'No disponible';
+  
+  // Formatear rating
+  const rating = info.rating ? info.rating.toFixed(1) : 'N/A';
+  const ratingStars = '⭐'.repeat(Math.floor(info.rating || 0));
+  
+  // Formatear plataformas
+  const platforms = info.platforms.length > 0 
+    ? info.platforms.slice(0, 5).join(', ') + (info.platforms.length > 5 ? '...' : '')
+    : 'No disponible';
+  
+  // Formatear géneros
+  const genres = info.genres.length > 0 
+    ? info.genres.join(', ')
+    : 'No disponible';
+  
+  // Descripción (limitada a 500 caracteres)
+  let description = info.description || 'No hay descripción disponible.';
+  if (description.length > 500) {
+    description = description.substring(0, 500) + '...';
+  }
+  
+  body.innerHTML = `
+    <div class="game-info-content">
+      ${info.image ? `<img src="${info.image}" alt="${info.name}" class="game-info-image">` : ''}
+      
+      <div class="game-info-details">
+        <div class="info-row">
+          <span class="info-label">📅 Fecha de Lanzamiento:</span>
+          <span class="info-value">${releaseDate}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="info-label">⭐ Rating:</span>
+          <span class="info-value">${rating} ${ratingStars}</span>
+          ${info.metacritic ? `<span class="metacritic-score">Metacritic: ${info.metacritic}</span>` : ''}
+        </div>
+        
+        <div class="info-row">
+          <span class="info-label">🎮 Plataformas:</span>
+          <span class="info-value">${platforms}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="info-label">🏷️ Géneros:</span>
+          <span class="info-value">${genres}</span>
+        </div>
+        
+        ${description ? `
+          <div class="info-row full-width">
+            <span class="info-label">📝 Descripción:</span>
+            <p class="info-description">${description}</p>
+          </div>
+        ` : ''}
+        
+        ${info.website ? `
+          <div class="info-row">
+            <span class="info-label">🌐 Sitio Web:</span>
+            <a href="${info.website}" target="_blank" class="info-link">Visitar sitio oficial</a>
+          </div>
+        ` : ''}
+        
+        <div class="info-row">
+          <span class="info-label">🔗 Ver en RAWG:</span>
+          <a href="https://rawg.io/games/${info.slug || info.id}" target="_blank" class="info-link">Abrir en RAWG.io</a>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Cerrar modal de información
+function closeGameInfoModal() {
+  document.getElementById('gameInfoModal').style.display = 'none';
+}
+
+// ------ FUNCIONES DE CALENDARIO ------
+
+let currentCalendarDate = new Date();
+
+// Cargar historial desde localStorage
+function loadGameHistory() {
+  try {
+    const saved = localStorage.getItem('gameHistory');
+    if (saved) {
+      gameHistory = JSON.parse(saved);
+    }
+  } catch (e) {
+    console.warn('Error cargando historial:', e);
+    gameHistory = [];
+  }
+}
+
+// Mostrar vista de calendario
+function showCalendarView() {
+  const calendarView = document.getElementById('calendar-view');
+  const isVisible = calendarView.style.display !== 'none';
+  
+  if (isVisible) {
+    calendarView.style.display = 'none';
+  } else {
+    calendarView.style.display = 'block';
+    renderCalendar();
+  }
+}
+
+// Renderizar calendario
+function renderCalendar() {
+  const year = currentCalendarDate.getFullYear();
+  const month = currentCalendarDate.getMonth();
+  
+  // Actualizar título
+  const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  document.getElementById('calendar-month-year').textContent = `${monthNames[month]} ${year}`;
+  
+  // Obtener primer día del mes y número de días
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  
+  // Agrupar juegos por fecha
+  const gamesByDate = {};
+  gameHistory.forEach(entry => {
+    const date = new Date(entry.date);
+    if (date.getFullYear() === year && date.getMonth() === month) {
+      const day = date.getDate();
+      if (!gamesByDate[day]) {
+        gamesByDate[day] = [];
+      }
+      gamesByDate[day].push(entry);
+    }
+  });
+  
+  // Crear grid del calendario
+  const grid = document.getElementById('calendar-grid');
+  grid.innerHTML = '';
+  
+  // Días de la semana
+  const weekDays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  weekDays.forEach(day => {
+    const dayHeader = document.createElement('div');
+    dayHeader.className = 'calendar-day-header';
+    dayHeader.textContent = day;
+    grid.appendChild(dayHeader);
+  });
+  
+  // Espacios vacíos antes del primer día
+  for (let i = 0; i < firstDay; i++) {
+    const emptyDay = document.createElement('div');
+    emptyDay.className = 'calendar-day empty';
+    grid.appendChild(emptyDay);
+  }
+  
+  // Días del mes
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayElement = document.createElement('div');
+    dayElement.className = 'calendar-day';
+    
+    const games = gamesByDate[day] || [];
+    const gameCount = games.length;
+    
+    if (gameCount > 0) {
+      dayElement.classList.add('has-games');
+      const intensity = Math.min(gameCount, 6);
+      dayElement.style.background = `rgba(112, 85, 163, ${0.4 + (intensity * 0.1)})`;
+      dayElement.style.borderColor = '#7055a3';
+      
+      // Tooltip con lista de juegos
+      const gameNames = games.map(g => g.name).join(', ');
+      dayElement.title = `${gameCount} juego${gameCount > 1 ? 's' : ''}: ${gameNames}`;
+      
+      dayElement.innerHTML = `
+        <span class="day-number">${day}</span>
+        <span class="game-count">${gameCount}</span>
+      `;
+      
+      // Click para ver detalles
+      dayElement.onclick = () => showDayDetails(day, games);
+    } else {
+      dayElement.innerHTML = `<span class="day-number">${day}</span>`;
+    }
+    
+    // Marcar día actual
+    const today = new Date();
+    if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+      dayElement.classList.add('today');
+    }
+    
+    grid.appendChild(dayElement);
+  }
+}
+
+// Mostrar detalles de un día
+function showDayDetails(day, games) {
+  const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  const month = monthNames[currentCalendarDate.getMonth()];
+  const year = currentCalendarDate.getFullYear();
+  
+  const gamesList = games.map(g => {
+    const date = new Date(g.date);
+    const time = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    return `<li><strong>${g.name}</strong> - ${time}</li>`;
+  }).join('');
+  
+  Swal.fire({
+    ...gamingAlert,
+    title: `📅 ${day} de ${month} ${year}`,
+    html: `
+      <p style="margin-bottom: 15px;"><strong>${games.length}</strong> juego${games.length > 1 ? 's' : ''} generado${games.length > 1 ? 's' : ''}</p>
+      <ul style="text-align: left; list-style: none; padding: 0;">
+        ${gamesList}
+      </ul>
+    `,
+    icon: 'info',
+    confirmButtonText: 'Cerrar'
+  });
+}
+
+// Navegar meses
+function previousMonth() {
+  currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+  renderCalendar();
+}
+
+function nextMonth() {
+  currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+  renderCalendar();
 }
 
 // Limpiar búsqueda

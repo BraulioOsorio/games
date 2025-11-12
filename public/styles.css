@@ -1647,3 +1647,291 @@ button:active::before {
     transform: scale(1);
   }
 }
+
+/* ------ MODAL DE INFORMACIÓN DEL JUEGO ------ */
+.game-info-modal {
+  max-width: 700px;
+}
+
+.game-info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.game-info-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #3a0066;
+  box-shadow: 0 0 15px rgba(80, 0, 160, 0.4);
+}
+
+.game-info-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  background: rgba(58, 0, 102, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid #7055a3;
+}
+
+.info-row.full-width {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.info-label {
+  color: #7055a3;
+  font-size: 0.7rem;
+  font-weight: bold;
+  min-width: 150px;
+}
+
+.info-value {
+  color: #b3b3b3;
+  font-size: 0.7rem;
+  flex: 1;
+}
+
+.metacritic-score {
+  color: #ffd700;
+  font-size: 0.6rem;
+  margin-left: 10px;
+}
+
+.info-description {
+  color: #b3b3b3;
+  font-size: 0.65rem;
+  line-height: 1.6;
+  margin-top: 5px;
+  text-align: justify;
+}
+
+.info-link {
+  color: #7055a3;
+  text-decoration: none;
+  font-size: 0.7rem;
+  transition: color 0.3s;
+}
+
+.info-link:hover {
+  color: #8a6fb8;
+  text-decoration: underline;
+}
+
+.loading-info, .no-game-info {
+  text-align: center;
+  padding: 40px;
+  color: #b3b3b3;
+  font-size: 0.8rem;
+}
+
+.info-btn {
+  background: #1a1a3d !important;
+  border-color: #4444a6 !important;
+  color: #9999d1 !important;
+}
+
+.info-btn:hover {
+  background: #4444a6 !important;
+  color: #1a1a1a !important;
+}
+
+/* ------ CALENDARIO ------ */
+.calendar-container {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 900px;
+  border: 2px solid #3a0066;
+  box-shadow: 0 0 15px rgba(80, 0, 160, 0.4);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.calendar-header h2 {
+  color: #7055a3;
+  text-shadow: 0 0 3px #3a0066, 0 0 6px #3a0066;
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.calendar-toggle-btn {
+  padding: 10px 20px;
+  background: #1a1a1a;
+  border: 2px solid #3a0066;
+  border-radius: 8px;
+  color: #999999;
+  cursor: pointer;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  transition: all 0.3s ease;
+}
+
+.calendar-toggle-btn:hover {
+  background: #3a0066;
+  color: #1a1a1a;
+  transform: translateY(-2px);
+}
+
+.calendar-view {
+  margin-top: 20px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.calendar-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.calendar-nav-btn {
+  padding: 8px 15px;
+  background: #1a1a1a;
+  border: 2px solid #3a0066;
+  border-radius: 8px;
+  color: #999999;
+  cursor: pointer;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.6rem;
+  transition: all 0.3s ease;
+}
+
+.calendar-nav-btn:hover {
+  background: #3a0066;
+  color: #1a1a1a;
+}
+
+.calendar-month-year {
+  color: #7055a3;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-shadow: 0 0 3px #3a0066;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+.calendar-day-header {
+  background: rgba(58, 0, 102, 0.3);
+  border: 1px solid #3a0066;
+  border-radius: 5px;
+  padding: 10px;
+  color: #7055a3;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.calendar-day {
+  background: rgba(26, 26, 26, 0.5);
+  border: 1px solid #3a0066;
+  border-radius: 5px;
+  padding: 10px;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.calendar-day.empty {
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+.calendar-day:hover:not(.empty) {
+  background: rgba(112, 85, 163, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(112, 85, 163, 0.4);
+}
+
+.calendar-day.today {
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.calendar-day.has-games {
+  cursor: pointer;
+}
+
+.day-number {
+  color: #b3b3b3;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.game-count {
+  color: #7055a3;
+  font-size: 0.6rem;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+.calendar-legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 15px;
+  background: rgba(58, 0, 102, 0.1);
+  border-radius: 10px;
+  border: 1px solid #3a0066;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #b3b3b3;
+  font-size: 0.7rem;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid #3a0066;
+}

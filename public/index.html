@@ -51,6 +51,25 @@
       <button id="add-word-btn" onclick="addCurrentWordToDownloadList()" disabled>
         Pasar a Descargas
       </button>
+      <button id="info-btn" onclick="showGameInfo()" disabled class="info-btn">
+        ℹ️ Ver Info
+      </button>
+    </div>
+  </div>
+  
+  <!-- Modal de información del juego -->
+  <div id="gameInfoModal" class="modal">
+    <div class="modal-content game-info-modal">
+      <div class="modal-header">
+        <h3 id="game-info-title">Información del Juego</h3>
+        <button class="close-btn" onclick="closeGameInfoModal()">✕</button>
+      </div>
+      <div class="modal-body" id="game-info-body">
+        <div class="loading-info">Cargando información...</div>
+      </div>
+      <div class="modal-footer">
+        <button onclick="closeGameInfoModal()">Cerrar</button>
+      </div>
     </div>
   </div>
 
@@ -132,6 +151,38 @@
       </div>
       <div class="modal-footer">
         <button onclick="closeDownloadModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista de Calendario -->
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <h2>📅 Calendario de Juegos</h2>
+      <button onclick="showCalendarView()" class="calendar-toggle-btn">Ver Calendario</button>
+    </div>
+    <div id="calendar-view" class="calendar-view" style="display: none;">
+      <div class="calendar-controls">
+        <button onclick="previousMonth()" class="calendar-nav-btn">◀ Mes Anterior</button>
+        <span id="calendar-month-year" class="calendar-month-year"></span>
+        <button onclick="nextMonth()" class="calendar-nav-btn">Mes Siguiente ▶</button>
+      </div>
+      <div id="calendar-grid" class="calendar-grid">
+        <!-- Se generará dinámicamente -->
+      </div>
+      <div id="calendar-legend" class="calendar-legend">
+        <div class="legend-item">
+          <span class="legend-color" style="background: rgba(112, 85, 163, 0.6);"></span>
+          <span>1 juego</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background: rgba(112, 85, 163, 0.8);"></span>
+          <span>2-5 juegos</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color" style="background: rgba(112, 85, 163, 1);"></span>
+          <span>6+ juegos</span>
+        </div>
       </div>
     </div>
   </div>
