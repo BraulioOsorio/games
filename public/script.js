@@ -11,6 +11,7 @@ let statsChart = null;
 
 const apiKey = 'c6beb639913a47a8b4148f99ab751619';
 let imageTimeout;
+let currentSearchFilter = 'all'; // Variable para el filtro de búsqueda actual
 
 // Funciones de loading
 function showLoading(message = 'Cargando...') {
@@ -439,9 +440,21 @@ function scheduleImageLoad(word) {
     if (url) {
       imgEl.src = url;
       imgEl.alt = word;
-      imgEl.onload = () => imgEl.classList.add('loaded');
+      imgEl.onload = () => {
+        imgEl.style.display = 'block';
+        imgEl.style.opacity = '0';
+        imgEl.classList.add('loaded');
+        // Animación suave de entrada
+        setTimeout(() => {
+          imgEl.style.transition = 'opacity 0.6s ease-in';
+          imgEl.style.opacity = '1';
+        }, 50);
+      };
+      imgEl.onerror = () => {
+        imgEl.style.display = 'none';
+      };
     } else {
-      imgEl.src = '';
+      imgEl.style.display = 'none';
       imgEl.alt = 'No encontrada';
     }
   }, 1500);
@@ -462,6 +475,15 @@ async function showRandomWord() {
       return;
     }
 
+    // Animación de transición - ocultar palabra actual
+    const txtEl = document.getElementById('random-word');
+    const wordContainer = document.getElementById('word-container');
+    
+    // Efecto de fade out
+    txtEl.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+    txtEl.style.opacity = '0';
+    txtEl.style.transform = 'translateY(-20px)';
+    
     // Elegir un juego aleatorio de remainingWords
     const randomIndex = Math.floor(Math.random() * remainingWords.length);
     const gameName = remainingWords[randomIndex];
@@ -471,19 +493,42 @@ async function showRandomWord() {
     usedWords.push(gameName);
     remainingWords.splice(randomIndex, 1);
 
-    // Mostrar texto al instante
-    const txtEl = document.getElementById('random-word');
-    txtEl.textContent = gameName;
-    txtEl.classList.add('visible');
+    // Esperar un poco antes de mostrar el nuevo juego
+    setTimeout(() => {
+      // Mostrar nuevo texto con animación
+      txtEl.textContent = gameName;
+      txtEl.style.opacity = '0';
+      txtEl.style.transform = 'translateY(20px)';
+      txtEl.classList.add('visible');
+      
+      // Efecto glow en el contenedor
+      wordContainer.classList.add('glow-effect');
+      setTimeout(() => {
+        wordContainer.classList.remove('glow-effect');
+      }, 2000);
+      
+      // Animación de entrada
+      setTimeout(() => {
+        txtEl.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+        txtEl.style.opacity = '1';
+        txtEl.style.transform = 'translateY(0)';
+      }, 50);
+    }, 300);
 
-    // Habilitar el botón de agregar a descargas
-    document.getElementById('add-word-btn').disabled = false;
+    // Habilitar el botón de agregar a descargas con animación
+    const addBtn = document.getElementById('add-word-btn');
+    addBtn.disabled = false;
+    addBtn.classList.add('pulse-effect');
+    setTimeout(() => {
+      addBtn.classList.remove('pulse-effect');
+    }, 1000);
 
     // Limpiar y ocultar la imagen antigua
     const imgEl = document.getElementById('game-img');
     imgEl.classList.remove('loaded');
     imgEl.src = '';
     imgEl.alt = '';
+    imgEl.style.display = 'none';
 
     // Programar la petición de imagen tras 1.5s sin más clicks
     scheduleImageLoad(gameName);
@@ -972,7 +1017,7 @@ document.addEventListener('DOMContentLoaded', () => {
       searchTimeout = setTimeout(() => {
         if (!isSearching) {
           isSearching = true;
-          searchGames().finally(() => {
+          searchGames(false).finally(() => { // false = no mostrar warning si está vacío
             isSearching = false;
           });
         }
@@ -993,19 +1038,40 @@ document.addEventListener('click', (e) => {
 
 // ------ FUNCIONES DEL BUSCADOR ------
 
+// Establecer filtro de búsqueda
+function setSearchFilter(status) {
+  currentSearchFilter = status;
+  
+  // Actualizar botones activos
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.getAttribute('data-status') === status) {
+      btn.classList.add('active');
+    }
+  });
+  
+  // Si hay resultados mostrados, volver a buscar con el filtro
+  const searchInput = document.getElementById('search-input');
+  if (searchInput.value.trim()) {
+    searchGames();
+  }
+}
+
 // Buscar juegos en la base de datos
-async function searchGames() {
+async function searchGames(showEmptyWarning = true) {
   const searchInput = document.getElementById('search-input');
   const searchTerm = searchInput.value.trim();
   
   if (!searchTerm) {
-    Swal.fire({
-      ...gamingAlert,
-      title: '⚠️ Campo Vacío',
-      text: 'Por favor ingresa un término de búsqueda.',
-      icon: 'warning',
-      confirmButtonText: 'Entendido'
-    });
+    if (showEmptyWarning) {
+      Swal.fire({
+        ...gamingAlert,
+        title: '⚠️ Campo Vacío',
+        text: 'Por favor ingresa un término de búsqueda.',
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
+      });
+    }
     return;
   }
   
@@ -1021,7 +1087,14 @@ async function searchGames() {
     const data = await response.json();
     hideLoading();
     
-    displaySearchResults(data.results, data.count, data.searchTerm);
+    // Aplicar filtro de estado si no es "all"
+    let filteredResults = data.results;
+    if (currentSearchFilter !== 'all') {
+      const filterStatus = parseInt(currentSearchFilter);
+      filteredResults = data.results.filter(game => game.status === filterStatus);
+    }
+    
+    displaySearchResults(filteredResults, filteredResults.length, data.searchTerm);
     
   } catch (error) {
     hideLoading();
@@ -1120,7 +1193,196 @@ function clearSearch() {
   }, 300);
   
   searchInput.value = '';
+  // Resetear filtro a "all"
+  setSearchFilter('all');
   searchInput.focus();
+}
+
+// ------ FUNCIONES DE EXPORTAR/IMPORTAR ------
+
+// Exportar datos a JSON
+async function exportData() {
+  try {
+    showLoading('Preparando exportación...');
+    
+    // Obtener todos los datos
+    const [availableGames, downloadsData, statsData] = await Promise.all([
+      fetch(`${API_BASE_URL}/api/games`).then(r => r.json()),
+      fetch(`${API_BASE_URL}/api/downloads`).then(r => r.json()),
+      fetch(`${API_BASE_URL}/api/stats`).then(r => r.json())
+    ]);
+    
+    // Combinar todos los juegos (disponibles + descargados)
+    const allGames = [
+      ...availableGames.map(g => ({ ...g, status: 1 })),
+      ...downloadsData.map(g => ({ ...g, status: 2 }))
+    ];
+    
+    const exportData = {
+      version: '1.0',
+      exportDate: new Date().toISOString(),
+      stats: statsData,
+      games: allGames,
+      downloads: downloadsData,
+      metadata: {
+        totalGames: statsData.total,
+        availableGames: statsData.available,
+        downloadedGames: statsData.downloaded,
+        hiddenGames: statsData.hidden
+      }
+    };
+    
+    // Crear y descargar archivo JSON
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    const fileName = `juegos-export-${new Date().toISOString().split('T')[0]}.json`;
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    hideLoading();
+    
+    Swal.fire({
+      ...gamingAlert,
+      title: '✅ ¡Exportación Exitosa!',
+      html: `
+        <p>Se exportaron <strong>${exportData.metadata.totalGames}</strong> juegos</p>
+        <p style="font-size: 0.6rem; color: #888;">Archivo: <code>${fileName}</code></p>
+      `,
+      icon: 'success',
+      confirmButtonText: 'Perfecto',
+      timer: 3000,
+      timerProgressBar: true
+    });
+    
+  } catch (error) {
+    hideLoading();
+    console.error('Error exportando:', error);
+    showError('Error exportando datos: ' + error.message);
+  }
+}
+
+// Importar datos
+function importData() {
+  document.getElementById('import-file-input').click();
+}
+
+// Manejar importación de archivo
+async function handleFileImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  try {
+    showLoading('Leyendo archivo...');
+    
+    const fileText = await file.text();
+    let importData;
+    
+    // Intentar parsear como JSON
+    try {
+      importData = JSON.parse(fileText);
+    } catch (e) {
+      throw new Error('El archivo no es un JSON válido');
+    }
+    
+    // Validar estructura
+    if (!importData.games || !Array.isArray(importData.games)) {
+      throw new Error('El archivo no tiene la estructura correcta');
+    }
+    
+    hideLoading();
+    
+    // Confirmar importación
+    const result = await Swal.fire({
+      ...gamingAlert,
+      title: '📤 ¿Importar Datos?',
+      html: `
+        <p>Se importarán <strong>${importData.games.length}</strong> juegos</p>
+        <p style="color: #dc143c; font-size: 0.7rem; margin-top: 15px;">
+          ⚠️ <strong>ADVERTENCIA:</strong> Esto agregará los juegos a tu base de datos actual.
+          Los juegos duplicados serán ignorados.
+        </p>
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: '✅ Sí, Importar',
+      cancelButtonText: '❌ Cancelar',
+      reverseButtons: true
+    });
+    
+    if (!result.isConfirmed) {
+      event.target.value = ''; // Resetear input
+      return;
+    }
+    
+    showLoading('Importando juegos...');
+    
+    // Importar juegos uno por uno
+    let successCount = 0;
+    let errorCount = 0;
+    let duplicateCount = 0;
+    
+    for (const game of importData.games) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/games`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ gameName: game.name })
+        });
+        
+        if (response.ok) {
+          successCount++;
+        } else {
+          const errorData = await response.json();
+          if (errorData.error && errorData.error.includes('ya existe')) {
+            duplicateCount++;
+          } else {
+            errorCount++;
+          }
+        }
+      } catch (err) {
+        errorCount++;
+      }
+    }
+    
+    hideLoading();
+    
+    // Recargar datos
+    await fetchGames();
+    await fetchStats();
+    
+    Swal.fire({
+      ...gamingAlert,
+      title: '✅ ¡Importación Completada!',
+      html: `
+        <div style="text-align: left; margin: 20px 0;">
+          <p><strong>✅ Importados:</strong> ${successCount} juegos</p>
+          <p><strong>⚠️ Duplicados:</strong> ${duplicateCount} juegos</p>
+          ${errorCount > 0 ? `<p><strong>❌ Errores:</strong> ${errorCount} juegos</p>` : ''}
+        </div>
+      `,
+      icon: 'success',
+      confirmButtonText: 'Perfecto',
+      timer: 4000,
+      timerProgressBar: true
+    });
+    
+    // Resetear input
+    event.target.value = '';
+    
+  } catch (error) {
+    hideLoading();
+    console.error('Error importando:', error);
+    showError('Error importando datos: ' + error.message);
+    event.target.value = ''; // Resetear input
+  }
 }
 
 

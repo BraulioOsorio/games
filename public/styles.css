@@ -137,6 +137,22 @@ h1 {
   justify-content: center;
   align-items: center;
   overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+/* Efecto glow en el contenedor de palabras */
+#word-container.glow-effect {
+  animation: glowPulse 2s ease-in-out;
+  box-shadow: 0 0 30px rgba(112, 85, 163, 0.8), 0 0 60px rgba(80, 0, 160, 0.6);
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(80, 0, 160, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(112, 85, 163, 0.8), 0 0 60px rgba(80, 0, 160, 0.6);
+  }
 }
 
 #random-word {
@@ -205,6 +221,21 @@ button:disabled:hover {
   transform: none;
   background: #2a2a2a;
   color: #555;
+}
+
+/* Efecto pulse en botones */
+.pulse-effect {
+  animation: pulseButton 1s ease-in-out;
+}
+
+@keyframes pulseButton {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(112, 85, 163, 0.6);
+  }
 }
 
 /* ------ SWEETALERT2 ESTILOS GAMING ------ */
@@ -932,12 +963,54 @@ button:disabled:hover {
   animation: shimmer 3s infinite;
 }
 
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
 .stats-container h2 {
   color: #7055a3;
-  text-align: center;
-  margin-bottom: 20px;
+  margin: 0;
   font-size: 1.2rem;
   text-shadow: 0 0 5px #3a0066;
+}
+
+.export-import-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.export-btn, .import-btn {
+  padding: 10px 20px;
+  background: #1a1a1a;
+  border: 2px solid #3a0066;
+  border-radius: 8px;
+  color: #999999;
+  cursor: pointer;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.6rem;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 3px #3a0066;
+}
+
+.export-btn:hover {
+  background: #3a0066;
+  color: #1a1a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(80, 0, 160, 0.4);
+}
+
+.import-btn:hover {
+  background: #7055a3;
+  border-color: #7055a3;
+  color: #1a1a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(112, 85, 163, 0.4);
 }
 
 .stats-grid {
@@ -1057,6 +1130,58 @@ button:disabled:hover {
 .search-form {
   margin-bottom: 20px;
   flex-shrink: 0;
+}
+
+/* Filtros de búsqueda */
+.search-filters {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(58, 0, 102, 0.2);
+  border-radius: 10px;
+  border: 1px solid #3a0066;
+}
+
+.filter-label {
+  display: block;
+  color: #7055a3;
+  font-size: 0.7rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  background: #1a1a1a;
+  border: 2px solid #3a0066;
+  border-radius: 8px;
+  color: #999999;
+  cursor: pointer;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.6rem;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 3px #3a0066;
+}
+
+.filter-btn:hover {
+  background: #3a0066;
+  color: #1a1a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(80, 0, 160, 0.4);
+}
+
+.filter-btn.active {
+  background: #7055a3;
+  border-color: #7055a3;
+  color: #1a1a1a;
+  box-shadow: 0 0 15px rgba(112, 85, 163, 0.6);
+  transform: scale(1.05);
 }
 
 .search-form .input-group {
@@ -1457,4 +1582,68 @@ button:disabled:hover {
 
 .search-table::-webkit-scrollbar-thumb:hover {
   background: #7055a3;
+}
+
+/* Animaciones mejoradas para transiciones */
+#random-word {
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+/* Mejoras en animaciones de botones */
+button {
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(112, 85, 163, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+button:active::before {
+  width: 0;
+  height: 0;
+}
+
+/* Animación suave para la barra de progreso */
+#progress-bar {
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mejoras en el contenedor de imagen */
+#game-image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+#game-img {
+  transition: opacity 0.6s ease-in, transform 0.6s ease-in;
+}
+
+#game-img.loaded {
+  animation: imageFadeIn 0.6s ease-in;
+}
+
+@keyframes imageFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

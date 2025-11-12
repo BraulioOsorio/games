@@ -75,6 +75,16 @@
         <button type="button" onclick="searchGames()">Buscar</button>
         <button type="button" onclick="clearSearch()" class="clear-btn">Limpiar</button>
       </div>
+      <!-- Filtros de búsqueda -->
+      <div class="search-filters">
+        <label class="filter-label">Filtrar por estado:</label>
+        <div class="filter-buttons">
+          <button type="button" class="filter-btn active" data-status="all" onclick="setSearchFilter('all')">Todos</button>
+          <button type="button" class="filter-btn" data-status="1" onclick="setSearchFilter('1')">Disponibles</button>
+          <button type="button" class="filter-btn" data-status="2" onclick="setSearchFilter('2')">Descargados</button>
+          <button type="button" class="filter-btn" data-status="3" onclick="setSearchFilter('3')">Ocultos</button>
+        </div>
+      </div>
     </div>
     
     <!-- Resultados de búsqueda -->
@@ -128,7 +138,14 @@
 
   <!-- Estadísticas -->
   <div class="stats-container">
-    <h2>Estadísticas</h2>
+    <div class="stats-header">
+      <h2>Estadísticas</h2>
+      <div class="export-import-buttons">
+        <button onclick="exportData()" class="export-btn" title="Exportar datos">📥 Exportar</button>
+        <button onclick="importData()" class="import-btn" title="Importar datos">📤 Importar</button>
+        <input type="file" id="import-file-input" accept=".json,.csv" style="display: none;" onchange="handleFileImport(event)">
+      </div>
+    </div>
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-number" id="total-games">0</div>
